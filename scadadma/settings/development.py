@@ -56,23 +56,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'mptt',
     'import_export',
-    'accounts',
+    # 'accounts',
     'legacy',
     
-    'prodschedule',
-    'monitor',
-    'analysis',
-    'alarm',
-    'baseanalys',
     'gis',
-    'entm',
-    'devm',
     'dmam',
-    'reports',
-    'sysm',
     'django_apscheduler',
-    'wirelessm',
-    'shexian'
+    
 ]
 
 
