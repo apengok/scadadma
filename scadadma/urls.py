@@ -49,20 +49,11 @@ urlpatterns = [
 
     #monitor
 
-    #waterwork
-    url(r'^prodschedule/', include('prodschedule.urls', namespace='prodschedule')),
-    url(r'^monitor/', include('monitor.urls', namespace='monitor')),
-    url(r'^analysis/', include('analysis.urls', namespace='analysis')),
-    url(r'^alarm/', include('alarm.urls', namespace='alarm')),
-    url(r'^baseanalys/', include('baseanalys.urls', namespace='baseanalys')),
+    #scadadma
     url(r'^gis/', include('gis.urls', namespace='gis')),
     url(r'^entm/', include('entm.urls', namespace='entm')),
-    url(r'^devm/', include('devm.urls', namespace='devm')),
     url(r'^dmam/', include('dmam.urls', namespace='dmam')),
-    url(r'^wirelessm/', include('wirelessm.urls', namespace='wirelessm')),
-    url(r'^reports/', include('reports.urls', namespace='reports')),
-    url(r'^sysm/', include('sysm.urls', namespace='sysm')),
-
+    
     
     
     # url(r'^celery-progress/', include('celery_progress.urls')),  # the endpoint is configurable
@@ -88,6 +79,6 @@ handler404 = error_404
 handler500 = error_500
 
 # if not settings.DEBUG:
-#     import waterwork.jobs
+#     import scadadma.jobs
 
-# import waterwork.jobs
+# import scadadma.jobs

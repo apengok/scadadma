@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.urls import reverse
-from entm.models import Organizations
+from entm.models import Organization
 import datetime
 from django.db.models import Q
 from django.dispatch import receiver
@@ -34,7 +34,7 @@ class FenceDistrict(MPTTModel):
     cid           = models.CharField(max_length=100,null=True,blank=True)
     pId           = models.CharField(max_length=100,null=True,blank=True)
 
-    belongto      = models.ForeignKey(Organizations,on_delete=models.CASCADE,null=True)
+    belongto      = models.ForeignKey(Organization,on_delete=models.CASCADE,null=True)
 
     parent  = TreeForeignKey('self', null=True, blank=True,on_delete=models.CASCADE, related_name='children', db_index=True)
 
@@ -43,7 +43,7 @@ class FenceDistrict(MPTTModel):
 
     class Meta:
         managed = True
-        db_table = 'fencedistrict'
+        db_table = 'dma_fencedistrict'
 
         
 
@@ -54,29 +54,6 @@ class FenceDistrict(MPTTModel):
         return self.name 
 
 
-class Polygon(models.Model):
-    polygonId   = models.CharField(max_length=255,null=True,blank=True)
-    name   = models.CharField('区域名称',max_length=100,unique=True)
-    ftype   = models.CharField('区域类型',max_length=30,null=True,blank=True)
-    shape   = models.CharField('形状',max_length=30,null=True,blank=True)
-    pointSeqs   = models.TextField()
-    longitudes   = models.TextField()
-    latitudes   = models.TextField()
-
-    dma_no       = models.CharField(max_length=30,null=True,blank=True) #关联的dma分区  
-
-
-    class Meta:
-        managed = True
-        db_table = 'polygon'
-
-        
-
-    def __unicode__(self):
-        return self.name    
-
-    def __str__(self):
-        return self.name 
 
 class FenceShape(models.Model):
     shapeId   = models.CharField(max_length=255,null=True,blank=True)   #形状公用，由shape区分
@@ -113,7 +90,7 @@ class FenceShape(models.Model):
 
     class Meta:
         managed = True
-        db_table = 'fenceshape'
+        db_table = 'dma_fenceshape'
 
         
 

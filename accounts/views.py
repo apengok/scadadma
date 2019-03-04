@@ -7,8 +7,8 @@ from django.http import HttpResponse,HttpResponseRedirect
 from django.utils.http import is_safe_url
 from django.views.generic import CreateView,DetailView,UpdateView,FormView
 from .forms import LoginForm,RegisterForm ,UserDetailChangeForm  #,GuestForm
-from waterwork.mixins import NextUrlMixin, RequestFormAttachMixin
-from sysm.models import Personalized
+from scadadma.mixins import NextUrlMixin, RequestFormAttachMixin
+
 # Create your views here.
 
 #LoginRequiredMixin,
@@ -124,15 +124,8 @@ class LoginView(NextUrlMixin, RequestFormAttachMixin, FormView):
     def form_valid(self, form):
         
         user = self.request.user
-        p = Personalized.objects.filter(belongto=user.belongto) #.filter(ptype="custom")
-
-        if p.exists():
-            next_path = p.first().frontPageMsgUrl
-            
-            if next_path is None or len(next_path) == 0:
-                next_path = self.get_next_url()
-        else:
-            next_path = self.get_next_url()
+        
+        next_path = self.get_next_url()
 
         return redirect(to=next_path)
         # return render(self.request,next_path,{})

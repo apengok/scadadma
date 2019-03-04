@@ -25,20 +25,20 @@ from django.utils.encoding import escape_uri_path
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from collections import OrderedDict
-from accounts.models import User,MyRoles
+from accounts.models import MyUser,MyRoles
 from accounts.forms import RoleCreateForm,MyRolesForm,RegisterForm,UserDetailChangeForm
 
 from entm.utils import unique_cid_generator,unique_uuid_generator,unique_rid_generator
-from entm.forms import OrganizationsAddForm,OrganizationsEditForm
-from entm.models import Organizations
+
+from entm.models import Organization
 from legacy.models import Bigmeter,District,Community,HdbFlowData,HdbFlowDataDay,HdbFlowDataMonth,HdbPressureData
-from dmam.models import WaterUserType,DMABaseinfo,DmaStation,Station,Meter,VCommunity,VConcentrator,DmaGisinfo
+from dmam.models import DMABaseinfo,DmaStation,DmaGisinfo
 import os
 from django.conf import settings
 
-from waterwork.mixins import AjaxableResponseMixin
+from scadadma.mixins import AjaxableResponseMixin
 
-from .models import FenceDistrict,Polygon,FenceShape
+from .models import FenceDistrict,FenceShape
 # from django.contrib.gis.geos import Polygon
 
 # Create your views here.
@@ -240,7 +240,7 @@ def savePolygons(request):
     latitudes = request.POST.get("latitudes")
 
     createDataUsername = request.user.user_name
-    organ = Organizations.objects.get(name=belongto)
+    organ = Organization.objects.get(name=belongto)
 
     if addOrUpdatePolygonFlag == "1":
         f = FenceDistrict.objects.get(cid=polygonId)
@@ -708,7 +708,7 @@ def addAdministration(request):
     # zonetype = request.POST.get("type")
     
     dma_no = request.POST.get("dma_no")
-    organ = Organizations.objects.first()
+    organ = Organization.objects.first()
     
     
 

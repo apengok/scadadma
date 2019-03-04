@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.urls import reverse
-from entm.models import Organizations
+from entm.models import Organization
 import datetime
 from django.db.models import Q
 from legacy.models import Bigmeter,District,Community,HdbFlowData,HdbFlowDataHour,HdbFlowDataDay,HdbFlowDataMonth,HdbPressureData
@@ -72,7 +72,7 @@ class DMABaseinfo(models.Model):
     create_date  = models.CharField('建立日期',max_length=30, null=True, blank=True) 
 
     belongto = models.ForeignKey(
-        Organizations,
+        Organization,
         on_delete=models.CASCADE,
         related_name='dma',
         # primary_key=True,

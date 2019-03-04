@@ -56,9 +56,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'mptt',
     'import_export',
-    # 'accounts',
+    'accounts',
     'legacy',
-    
+    'entm',
     'gis',
     'dmam',
     'django_apscheduler',
@@ -83,7 +83,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'waterwork.urls'
+ROOT_URLCONF = 'scadadma.urls'
 
 TEMPLATES = [
     {
@@ -102,11 +102,11 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'waterwork.wsgi.application'
+WSGI_APPLICATION = 'scadadma.wsgi.application'
 
 # IMPORT_EXPORT_USE_TRANSACTIONS = True
 
-# ASGI_APPLICATION = "waterwork.routing.application"
+# ASGI_APPLICATION = "scadadma.routing.application"
 
 # Database
 # yum install mysql mysql-devel mysql-lib
@@ -123,7 +123,7 @@ DATABASES = {
         'NAME': 'zncb',
         'USER': 'scada',
         'PASSWORD': 'scada',
-        'HOST': 'localhost',    #120.78.255.129 192.168.197.134
+        'HOST': '192.168.1.27',    #120.78.255.129 192.168.197.134
         'PORT': '3306',
         'STORAGE_ENGINE': 'INNODB',
         'OPTIONS': {'charset': 'utf8mb4'},

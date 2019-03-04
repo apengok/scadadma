@@ -5,8 +5,8 @@ from . import models
 
 # Register your models here.
 
-@admin.register(models.Organizations)
-class OrganizationsAdmin(admin.ModelAdmin):
+@admin.register(models.Organization)
+class OrganizationAdmin(admin.ModelAdmin):
     list_display = ['name','parent','attribute','organlevel','register_date','owner_name','phone_number','firm_address','cid','pId','is_org','uuid']
     list_filter = ('organlevel','attribute')
     search_fields = ['name']

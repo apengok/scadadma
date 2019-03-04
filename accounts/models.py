@@ -10,9 +10,10 @@ from django.db.models.signals import pre_save
 import json
 from django.db.models import Q
 
-from entm.models import Organizations
-from dmam.models import DMABaseinfo,Meter,Station,SimCard,VConcentrator,VCommunity,VWatermeter,VPressure,VSecondWater
+from entm.models import Organization
+from dmam.models import DMABaseinfo
 from gis.models import FenceDistrict
+
 
 # python manage.py dumpdata dma --format json --indent 4 > dma/dmadd.json
 # python manage.py loaddata dma/dmadd.json 
@@ -40,7 +41,7 @@ class MyRoles(Group):
     permissionTree  = models.TextField(blank=True)
     # permissionTree  = models.CharField(max_length=50000,blank=True)
 
-    belongto     = models.ForeignKey(Organizations,related_name='roles',null=True, blank=True,on_delete=models.CASCADE)
+    belongto     = models.ForeignKey(Organization,related_name='roles',null=True, blank=True,on_delete=models.CASCADE)
 
     objects = MyRolesManager()
 
@@ -123,7 +124,7 @@ class MyUser(AbstractBaseUser,PermissionsMixin):
     sex          = models.CharField(verbose_name='性别', max_length=30, blank=True)
     phone_number = models.CharField(verbose_name='手机',  max_length=30, blank=True)
     # belongto     = models.CharField(_('belongs to'), max_length=30, blank=True)
-    belongto     = models.ForeignKey(Organizations,verbose_name='所属组织', related_name='users',null=True, blank=True,on_delete=models.CASCADE)
+    belongto     = models.ForeignKey(Organization,verbose_name='所属组织', related_name='users',null=True, blank=True,on_delete=models.CASCADE)
     expire_date  = models.CharField(verbose_name='授权截止日期',  max_length=30, blank=True)
     # Role         = models.CharField(_('Role'), max_length=30, blank=True)
     Role        = models.ForeignKey(MyRoles,verbose_name='角色',related_name='users',null=True, blank=True,on_delete=models.CASCADE)
@@ -248,153 +249,97 @@ class MyUser(AbstractBaseUser,PermissionsMixin):
         return userlist
 
     #组织及下属组织下的所有站点
-    def station_list_queryset(self,q):
-        # userlist = []
-        if self.is_admin:
-            return Station.objects.search(q)
+    # def station_list_queryset(self,q):
+    #     # userlist = []
+    #     if self.is_admin:
+    #         return Station.objects.search(q)
 
-        stationlist = Station.objects.none()
-        #下级组织的用户
-        sub_organs = self.belongto.sub_organizations(include_self=True)
-        # user | merge two QuerySet
-        for g in sub_organs:
-            stationlist |= g.station_set.search(q)
+    #     stationlist = Station.objects.none()
+    #     #下级组织的用户
+    #     sub_organs = self.belongto.sub_organizations(include_self=True)
+    #     # user | merge two QuerySet
+    #     for g in sub_organs:
+    #         stationlist |= g.station_set.search(q)
             
-        return stationlist
+    #     return stationlist
 
-    #组织及下属组织下的所有表具
-    def meter_list_queryset(self,q):
-        # userlist = []
-        if self.is_admin:
-            return Meter.objects.search(q)
+    
 
-        meterlist = Meter.objects.none()
-        #下级组织的用户
-        sub_organs = self.belongto.sub_organizations(include_self=True)
-        # user | merge two QuerySet
-        for g in sub_organs:
-            meterlist |= g.meter_set.search(q)
+    #  #组织及下属组织下的所有小区
+    # def community_list_queryset(self,q):
+    #     # userlist = []
+    #     if self.is_admin:
+    #         return VCommunity.objects.search(q)
+
+    #     communitylist = VCommunity.objects.none()
+    #     #下级组织的用户
+    #     sub_organs = self.belongto.sub_organizations(include_self=True)
+    #     # user | merge two QuerySet
+    #     for g in sub_organs:
+    #         communitylist |= g.vcommunity_set.search(q)
             
-        return meterlist
+    #     return communitylist
 
-    #组织及下属组织下的所有simcard
-    def simcard_list_queryset(self,q):
-        # userlist = []
-        if self.is_admin:
-            return SimCard.objects.search(q)
+    # #组织及下属组织下的所有户表
+    # def watermeter_list_queryset(self,q):
+    #     # userlist = []
+    #     if self.is_admin:
+    #         return VWatermeter.objects.search(q)
 
-        simcardlist = SimCard.objects.none()
-        #下级组织的用户
-        sub_organs = self.belongto.sub_organizations(include_self=True)
-        # user | merge two QuerySet
-        for g in sub_organs:
-            simcardlist |= g.simcard_set.search(q)
+    #     watermeterlist = VWatermeter.objects.none()
+    #     #下级组织的用户
+    #     sub_organs = self.belongto.sub_organizations(include_self=True)
+    #     # user | merge two QuerySet
+    #     for g in sub_organs:
+    #         watermeterlist |= g.vwatermeter_set.search(q)
             
-        return simcardlist
+    #     return watermeterlist
 
-    #组织及下属组织下的所有集中器
-    def concentrator_list_queryset(self,q):
-        # userlist = []
-        if self.is_admin:
-            return VConcentrator.objects.search(q)
 
-        concentratorlist = VConcentrator.objects.none()
-        #下级组织的用户
-        sub_organs = self.belongto.sub_organizations(include_self=True)
-        # user | merge two QuerySet
-        for g in sub_organs:
-            concentratorlist |= g.vconcentrator_set.search(q)
+    
+
+    # # 组织下dma分区列表--二级和三级列表分开查询,组织cid、级别organlevel、dma_no
+    # def dma_list_queryset(self):
+    #     # if self.is_admin:
+    #     #     return DMABaseinfo.objects.search(cid,level,dma_no)
+
+    #     dmalist = DMABaseinfo.objects.none()
+    #     #下级组织的用户
+    #     sub_organs = self.belongto.sub_organizations(include_self=True)
+    #     # user | merge two QuerySet
+    #     for g in sub_organs:
+    #         dmalist |= g.dma.all()
             
-        return concentratorlist
+    #     return dmalist
 
-     #组织及下属组织下的所有小区
-    def community_list_queryset(self,q):
-        # userlist = []
-        if self.is_admin:
-            return VCommunity.objects.search(q)
+    # # 组织下dma分区围栏列表
+    # def fence_list_queryset(self):
+    #     # if self.is_admin:
+    #     #     return DMABaseinfo.objects.search(cid,level,dma_no)
 
-        communitylist = VCommunity.objects.none()
-        #下级组织的用户
-        sub_organs = self.belongto.sub_organizations(include_self=True)
-        # user | merge two QuerySet
-        for g in sub_organs:
-            communitylist |= g.vcommunity_set.search(q)
+    #     fencelist = FenceDistrict.objects.none()
+    #     #下级组织的用户
+    #     sub_organs = self.belongto.sub_organizations(include_self=True)
+    #     # user | merge two QuerySet
+    #     for g in sub_organs:
+    #         fencelist |= g.fencedistrict_set.all()
             
-        return communitylist
-
-    #组织及下属组织下的所有户表
-    def watermeter_list_queryset(self,q):
-        # userlist = []
-        if self.is_admin:
-            return VWatermeter.objects.search(q)
-
-        watermeterlist = VWatermeter.objects.none()
-        #下级组织的用户
-        sub_organs = self.belongto.sub_organizations(include_self=True)
-        # user | merge two QuerySet
-        for g in sub_organs:
-            watermeterlist |= g.vwatermeter_set.search(q)
-            
-        return watermeterlist
-
-
-    #组织及下属组织下的所有户表
-    def pressure_list_queryset(self,q):
-        # userlist = []
-        if self.is_admin:
-            return VPressure.objects.search(q)
-
-        pressuremeterlist = VPressure.objects.none()
-        #下级组织的用户
-        sub_organs = self.belongto.sub_organizations(include_self=True)
-        # user | merge two QuerySet
-        for g in sub_organs:
-            pressuremeterlist |= g.vpressure_set.search(q)
-            
-        return pressuremeterlist
-
-    # 组织下dma分区列表--二级和三级列表分开查询,组织cid、级别organlevel、dma_no
-    def dma_list_queryset(self):
-        # if self.is_admin:
-        #     return DMABaseinfo.objects.search(cid,level,dma_no)
-
-        dmalist = DMABaseinfo.objects.none()
-        #下级组织的用户
-        sub_organs = self.belongto.sub_organizations(include_self=True)
-        # user | merge two QuerySet
-        for g in sub_organs:
-            dmalist |= g.dma.all()
-            
-        return dmalist
-
-    # 组织下dma分区围栏列表
-    def fence_list_queryset(self):
-        # if self.is_admin:
-        #     return DMABaseinfo.objects.search(cid,level,dma_no)
-
-        fencelist = FenceDistrict.objects.none()
-        #下级组织的用户
-        sub_organs = self.belongto.sub_organizations(include_self=True)
-        # user | merge two QuerySet
-        for g in sub_organs:
-            fencelist |= g.fencedistrict_set.all()
-            
-        return fencelist
+    #     return fencelist
 
     #组织及下属组织下的二供
-    def secondwater_list_queryset(self,q):
-        # userlist = []
-        if self.is_admin:
-            return VSecondWater.objects.search(q)
+    # def secondwater_list_queryset(self,q):
+    #     # userlist = []
+    #     if self.is_admin:
+    #         return VSecondWater.objects.search(q)
 
-        secondwaterlist = VSecondWater.objects.none()
-        #下级组织的用户
-        sub_organs = self.belongto.sub_organizations(include_self=True)
-        # user | merge two QuerySet
-        for g in sub_organs:
-            secondwaterlist |= g.vsecondwater_set.search(q)
+    #     secondwaterlist = VSecondWater.objects.none()
+    #     #下级组织的用户
+    #     sub_organs = self.belongto.sub_organizations(include_self=True)
+    #     # user | merge two QuerySet
+    #     for g in sub_organs:
+    #         secondwaterlist |= g.vsecondwater_set.search(q)
             
-        return secondwaterlist
+    #     return secondwaterlist
 
     def user_list(self):
         userlist = []

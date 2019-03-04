@@ -1,15 +1,11 @@
 # -*- coding:utf-8 -*-
 from import_export import resources,fields
-from accounts.models import User,MyRoles
-from entm.models import Organizations,PorgressBar
-from waterwork.middleware import get_current_user
+from accounts.models import MyUser,MyRoles
+from entm.models import Organization
+from scadadma.middleware import get_current_user
 import datetime 
 from entm import constant
 
-
-
-def progress_add(num):
-    constant.PROGRESS_COUNT += num
 
 #https://stackoverflow.com/questions/1108428/how-do-i-read-a-date-in-excel-format-in-python
 def minimalist_xldate_as_datetime(xldate, datemode):
@@ -34,7 +30,7 @@ class UserResource(resources.ModelResource):
 
 
     class Meta:
-        model = User
+        model = MyUser
         import_id_fields = ['user_name']
         fields = ('user_name', 'real_name', 'sex','phone_number','email','is_active','expire_date','belongto','Role')
         # exclude = ('idstr')
@@ -94,7 +90,7 @@ class ImportUserResource(resources.ModelResource):
 
 
     class Meta:
-        model = User
+        model = MyUser
         import_id_fields = ['user_name']
         fields = ('user_name', 'real_name', 'sex','phone_number','email','is_active','expire_date','belongto','Role')
         # exclude = ('idstr')

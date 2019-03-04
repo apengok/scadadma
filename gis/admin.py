@@ -11,12 +11,6 @@ class FenceDistrictAdmin(admin.ModelAdmin):
 
 
 
-
-@admin.register(models.Polygon)
-class PolygonAdmin(admin.ModelAdmin):
-    list_display = ['name','polygonId','ftype','shape','pointSeqs','longitudes','latitudes','dma_no']
-
-
 @admin.register(models.FenceShape)
 class FenceShapeAdmin(admin.ModelAdmin):
     list_display = ['shapeId','name','zonetype','shape','dma_no','pointSeqs','longitudes','latitudes','lnglatQuery_LU','lnglatQuery_RD']

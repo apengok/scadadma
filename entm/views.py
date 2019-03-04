@@ -25,22 +25,22 @@ from django.utils.encoding import escape_uri_path
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from collections import OrderedDict
-from accounts.models import User,MyRoles
+from accounts.models import MyUser,MyRoles
 from accounts.forms import RoleCreateForm,MyRolesForm,RegisterForm,UserDetailChangeForm
 
 from .utils import unique_cid_generator,unique_uuid_generator,unique_rid_generator
-from .forms import OrganizationsAddForm,OrganizationsEditForm
-from . models import Organizations,PorgressBar
+from .forms import OrganizationAddForm,OrganizationEditForm
+from . models import Organization
 import os
 from django.conf import settings
 from .resources import UserResource,ImportUserResource,minimalist_xldate_as_datetime
 from tablib import Dataset
 from entm import constant
 # from celery import shared_task
-from waterwork.mixins import AjaxableResponseMixin
-from sysm.models import Personalized
+from scadadma.mixins import AjaxableResponseMixin
+# from sysm.models import Personalized
 
-from waterwork.menus import choicetreedict
+from scadadma.menus import choicetreedict
 
 import logging
 
@@ -83,13 +83,6 @@ def faviconredirect(request):
                 favicon_url = "/media/resources/img/logo/" + p.first().webIco
 
     return HttpResponseRedirect(favicon_url)
-
-def room(request, room_name):
-    return render(request, "entm/room.html", {
-        "room_name_json": mark_safe(json.dumps(room_name))
-    })
-
-
 
 
 def recursive_node_to_dict(node,url_cat):
@@ -443,7 +436,7 @@ def oranizationtree(request):
     organtree = []
 
     user = request.user
-    organs = user.belongto #Organizations.objects.all()
+    organs = user.belongto #Organization.objects.all()
     organ_list = organs.get_descendants(include_self=True)
     for o in organ_list.values("id","name","cid","pId","uuid","organlevel","attribute"):
         organtree.append({
@@ -475,7 +468,7 @@ def oranizationSelectlist(request):
     data = []
 
     user = request.user
-    organs = user.belongto #Organizations.objects.all()
+    organs = user.belongto #Organization.objects.all()
     organ_list = organs.get_descendants(include_self=True)
     for o in organ_list.values("id","name","cid"):
         data.append({
@@ -554,7 +547,7 @@ def userlist(request):
     print("user all:",userl)
     if groupName != "":
         #查询的组织
-        query_org = Organizations.objects.get(cid=groupName)
+        query_org = Organization.objects.get(cid=groupName)
         userl = [u for u in userl if u.belongto == query_org]
         # print("query organ user,",userl)
 
@@ -681,9 +674,9 @@ def findOperations(request):
 group add
 """
 class UserGroupAddView(AjaxableResponseMixin,UserPassesTestMixin,CreateView):
-    model = Organizations
+    model = Organization
     template_name = "entm/groupadd.html"
-    form_class = OrganizationsAddForm
+    form_class = OrganizationAddForm
     success_url = reverse_lazy("entm:usermanager");
 
     # @method_decorator(permission_required("dma.change_stations"))
@@ -720,7 +713,7 @@ class UserGroupAddView(AjaxableResponseMixin,UserPassesTestMixin,CreateView):
         instance = form.save(commit=False)
         instance.is_org = True
         cid = self.request.POST.get("pId","oranization")  #cid is parent orgnizations
-        organizaiton_belong = Organizations.objects.get(cid=cid)
+        organizaiton_belong = Organization.objects.get(cid=cid)
         instance.parent = organizaiton_belong
         instance.pId = cid
         instance.cid = unique_cid_generator(instance,new_cid=cid)
@@ -740,7 +733,7 @@ class UserGroupAddView(AjaxableResponseMixin,UserPassesTestMixin,CreateView):
         # initial_base["menu"] = Menu.objects.get(id=1)
         initial_base["cid"] = kwargs.get("cid")
         initial_base["pId"] = kwargs.get("pId")
-        organizaiton_belong = Organizations.objects.get(cid=kwargs.get("pId"))
+        organizaiton_belong = Organization.objects.get(cid=kwargs.get("pId"))
         initial_base["parent_attribute"] = organizaiton_belong.attribute
         initial_base["parent_organlevel"] = organizaiton_belong.organlevel
         print(organizaiton_belong,organizaiton_belong.organlevel,organizaiton_belong.attribute)
@@ -754,8 +747,8 @@ class UserGroupAddView(AjaxableResponseMixin,UserPassesTestMixin,CreateView):
 Group edit, manager
 """
 class UserGroupEditView(AjaxableResponseMixin,UserPassesTestMixin,UpdateView):
-    model = Organizations
-    form_class = OrganizationsEditForm
+    model = Organization
+    form_class = OrganizationEditForm
     template_name = "entm/groupedit.html"
     success_url = reverse_lazy("entm:rolemanager");
 
@@ -793,7 +786,7 @@ class UserGroupEditView(AjaxableResponseMixin,UserPassesTestMixin,UpdateView):
 
     def get_object(self):
         print(self.kwargs)
-        return Organizations.objects.get(cid=self.kwargs["pId"])
+        return Organization.objects.get(cid=self.kwargs["pId"])
 
     # def get_initial(self):
     #     initial = super(UserGroupEditView, self).get_initial()
@@ -823,8 +816,8 @@ class UserGroupEditView(AjaxableResponseMixin,UserPassesTestMixin,UpdateView):
 Group Detail, manager
 """
 class UserGroupDetailView(DetailView):
-    model = Organizations
-    form_class = OrganizationsEditForm
+    model = Organization
+    form_class = OrganizationEditForm
     template_name = "entm/groupdetail.html"
     # success_url = reverse_lazy("entm:rolemanager");
 
@@ -836,13 +829,13 @@ class UserGroupDetailView(DetailView):
     
     def get_object(self):
         print(self.kwargs)
-        return Organizations.objects.get(cid=self.kwargs["pId"])
+        return Organization.objects.get(cid=self.kwargs["pId"])
 
 """
 Assets comment deletion, manager
 """
 class UserGroupDeleteView(AjaxableResponseMixin,UserPassesTestMixin,DeleteView):
-    model = Organizations
+    model = Organization
     # template_name = "aidsbank/asset_comment_confirm_delete.html"
 
     def dispatch(self, *args, **kwargs):
@@ -870,7 +863,7 @@ class UserGroupDeleteView(AjaxableResponseMixin,UserPassesTestMixin,DeleteView):
 
     def get_object(self,*args, **kwargs):
         print("delete objects:",self.kwargs,kwargs)
-        return Organizations.objects.get(cid=kwargs["pId"])
+        return Organization.objects.get(cid=kwargs["pId"])
 
     def delete(self, request, *args, **kwargs):
         """
@@ -915,7 +908,7 @@ def verifyUserName(request):
     print("verifyUserName:",request.POST)
 
     username = request.POST.get("userName")
-    bflag = not User.objects.filter(user_name=username).exists()
+    bflag = not MyUser.objects.filter(user_name=username).exists()
 
     return HttpResponse(json.dumps({"success":bflag}))
 
@@ -1088,7 +1081,7 @@ def roledeletemore(request):
 
     #被分配了的角色不可以删除
     assigned_roles = []
-    for u in User.objects.all():
+    for u in MyUser.objects.all():
         assigned_roles.append(u.Role)
     
     flag = 0
@@ -1145,7 +1138,7 @@ class RoleDeleteView(AjaxableResponseMixin,UserPassesTestMixin,DeleteView):
         print('delete role ',self.object)
         #被分配了的角色不可以删除
         assigned_roles = []
-        for u in User.objects.all():
+        for u in MyUser.objects.all():
             assigned_roles.append(u.Role)
         print('assigned_roles:',assigned_roles)
         if self.object in assigned_roles:
@@ -1171,7 +1164,7 @@ class UserMangerView(LoginRequiredMixin,TemplateView):
         # context["page_submenu"] = "组织和用户管理"
         context["page_title"] = "组织和用户管理"
 
-        # context["user_list"] = User.objects.all()
+        # context["user_list"] = MyUser.objects.all()
         
 
         return context  
@@ -1181,7 +1174,7 @@ class UserMangerView(LoginRequiredMixin,TemplateView):
 User add, manager
 """
 class UserAddView(AjaxableResponseMixin,UserPassesTestMixin,CreateView):
-    model = User
+    model = MyUser
     template_name = "entm/useradd.html"
     form_class = RegisterForm
     success_url = reverse_lazy("entm:usermanager")
@@ -1237,7 +1230,7 @@ class UserAddView(AjaxableResponseMixin,UserPassesTestMixin,CreateView):
             }
             
             return HttpResponse(json.dumps(data)) #JsonResponse(data)
-        organization = Organizations.objects.get(cid=groupId)
+        organization = Organization.objects.get(cid=groupId)
         instance.belongto = organization
         
         instance.idstr=groupId  #所属组织 cid
@@ -1262,7 +1255,7 @@ class UserAddView(AjaxableResponseMixin,UserPassesTestMixin,CreateView):
         groupId = ''
         groupname = ''
         if len(uuid) > 0:
-            organ = Organizations.objects.get(uuid=uuid)
+            organ = Organization.objects.get(uuid=uuid)
             groupId = organ.cid
             groupname = organ.name
         # else:
@@ -1283,7 +1276,7 @@ class UserAddView(AjaxableResponseMixin,UserPassesTestMixin,CreateView):
 User edit, manager
 """
 class UserEditView(AjaxableResponseMixin,UserPassesTestMixin,UpdateView):
-    model = User
+    model = MyUser
     form_class = UserDetailChangeForm
     template_name = "entm/useredit.html"
     success_url = reverse_lazy("entm:usermanager")
@@ -1342,7 +1335,7 @@ class UserEditView(AjaxableResponseMixin,UserPassesTestMixin,UpdateView):
                 return HttpResponse(json.dumps(data)) #JsonResponse(data)
 
         instance = form.save(commit=False)
-        organization = Organizations.objects.get(cid=groupId)
+        organization = Organization.objects.get(cid=groupId)
         instance.belongto = organization
         
         instance.idstr=groupId  #所属组织 cid
@@ -1393,7 +1386,7 @@ class AssignRoleView(TemplateView,UserPassesTestMixin):
 
     def get_object(self):
         # print(self.kwargs)
-        return User.objects.get(id=self.kwargs["pk"])
+        return MyUser.objects.get(id=self.kwargs["pk"])
 
     def post(self,request,*args,**kwargs):
         print ("assinrole:",request.POST)
@@ -1452,12 +1445,12 @@ class AssignStnView(TemplateView,UserPassesTestMixin):
         context["role_list"] = MyRoles.objects.all()
         pk = kwargs["pk"]
         context["object_id"] = pk
-        context["user"] = User.objects.get(pk=pk)
+        context["user"] = MyUser.objects.get(pk=pk)
         return context
 
     def get_object(self):
         # print(self.kwargs)
-        return User.objects.get(id=self.kwargs["pk"])
+        return MyUser.objects.get(id=self.kwargs["pk"])
 
     def post(self,request,*args,**kwargs):
         
@@ -1488,7 +1481,7 @@ def userdeletemore(request):
     deltems_list = deltems.split(';')
 
     for uid in deltems_list:
-        u = User.objects.get(id=int(uid))
+        u = MyUser.objects.get(id=int(uid))
         # print('delete user ',u)
         #删除用户 并且删除用户在分组中的角色
         for g in u.groups.all():
@@ -1501,7 +1494,7 @@ def userdeletemore(request):
 Assets comment deletion, manager
 """
 class UserDeleteView(AjaxableResponseMixin,UserPassesTestMixin,DeleteView):
-    model = User
+    model = MyUser
     # template_name = "aidsbank/asset_comment_confirm_delete.html"
 
     def test_func(self):
@@ -1528,7 +1521,7 @@ class UserDeleteView(AjaxableResponseMixin,UserPassesTestMixin,DeleteView):
 
     def get_object(self,*args, **kwargs):
         # print("delete objects:",self.kwargs,kwargs)
-        return User.objects.get(pk=kwargs["pk"])
+        return MyUser.objects.get(pk=kwargs["pk"])
 
     def delete(self, request, *args, **kwargs):
         """
@@ -1586,7 +1579,7 @@ class UserImportView(TemplateView,UserPassesTestMixin):
 
     # def get_object(self):
     #     # print(self.kwargs)
-    #     return User.objects.get(id=self.kwargs["pk"])
+    #     return MyUser.objects.get(id=self.kwargs["pk"])
 
     def check_row(self, row, **kwargs):
         user = kwargs["user"]
@@ -1604,7 +1597,7 @@ class UserImportView(TemplateView,UserPassesTestMixin):
             if isinstance(row[u'用户名'],float):
                 username = str(int(row[u'用户名']))
                 
-        bflag = User.objects.filter(user_name=username).exists()
+        bflag = MyUser.objects.filter(user_name=username).exists()
         if bflag:
             err_msg.append(u"用户%s已存在"%(username))
 
@@ -1666,7 +1659,7 @@ class UserImportView(TemplateView,UserPassesTestMixin):
 
         org_name = row[u'所属组织']
         if org_name != '':
-            org = Organizations.objects.filter(name=org_name)
+            org = Organization.objects.filter(name=org_name)
             if not org.exists():
                 err_msg.append(u"该组织%s不存在"%(org_name))
         else:
@@ -1708,7 +1701,7 @@ class UserImportView(TemplateView,UserPassesTestMixin):
             progressbar.save()
 
         constant.PROGRESS_NUM = len(imported_data.dict)
-        constant.raw_record = User.objects.count()
+        constant.raw_record = MyUser.objects.count()
         constant.PROGRESS_COUNT = 0
         kwargs["user"] = user
 
@@ -1758,7 +1751,7 @@ def importProgress(request):
     try:
         progressbar = PorgressBar.objects.first()
         
-        user_count=User.objects.count()
+        user_count=MyUser.objects.count()
         print("importProgress:user_count",progressbar.totoal,progressbar.progress,user_count)
         # num_progress = int((user_count - constant.raw_record)*100/progressbar.totoal)
 

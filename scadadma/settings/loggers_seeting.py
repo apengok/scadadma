@@ -15,7 +15,7 @@ LOGGING = {
                'class':'logging.handlers.TimedRotatingFileHandler',
             'when':'midnight',
             'interval':1,
-            'filename':'c:/logs/ErrorLoggers.log',
+            'filename':'logs/ErrorLoggers.log',
             'formatter':'large',
         },
         'info_file':{
@@ -23,7 +23,7 @@ LOGGING = {
                'class':'logging.handlers.TimedRotatingFileHandler',
             'when':'midnight',
             'interval':1,
-            'filename':'c:/logs/InfoLoggers.log',
+            'filename':'logs/InfoLoggers.log',
             'formatter':'large',
         },
     },

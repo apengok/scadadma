@@ -7,8 +7,8 @@ from django.contrib.admin.widgets import AdminDateWidget,AdminSplitDateTime
 from django.contrib.postgres.forms.ranges import DateRangeField, RangeWidget
 
 
-from entm.models import Organizations
-from .models import WaterUserType,DMABaseinfo,Station,Meter,VSecondWater
+from entm.models import Organization
+from .models import DMABaseinfo
 import datetime
 
 class DMACreateForm(forms.ModelForm):
@@ -35,66 +35,8 @@ class DMABaseinfoForm(forms.ModelForm):
     def clean_belongto(self):
         organ_name = self.cleaned_data.get("belongto")
         print('organ_name:',organ_name)
-        organ = Organizations.objects.get(name=organ_name)
+        organ = Organization.objects.get(name=organ_name)
         return organ
-
-class WaterUserTypeForm(forms.ModelForm):
-    
-    class Meta:
-        model = WaterUserType
-        fields = ['usertype','explains']
-
-    def __init__(self,instance,*args,**kwargs):
-        super(WaterUserTypeForm, self).__init__(*args, **kwargs)
-                        
-
-class StationsForm(forms.ModelForm):
-    description = forms.CharField(required = False)
-    belongto = forms.CharField()
-    serialnumber = forms.CharField()
-    simid = forms.CharField(required = False)
-    dn = forms.CharField()
-    metertype = forms.CharField()
-
-
-    def __init__(self, *args, **kwargs):
-        super(StationsForm, self).__init__(*args, **kwargs)
-        
-
-    class Meta:
-        model = Station    
-        fields= ('username','description','usertype','madedate','lng','lat','locate','focus','biguser')
-
-
-class StationsEditForm(forms.ModelForm):
-    description = forms.CharField(required = False)
-    belongto = forms.CharField()
-    serialnumber = forms.CharField()
-    simid = forms.CharField(required = False)
-    dn = forms.CharField()
-    metertype = forms.CharField()
-    meter = forms.CharField()
-
-
-    def __init__(self, *args, **kwargs):
-        super(StationsEditForm, self).__init__(*args, **kwargs)
-
-        self.fields['belongto'].initial = self.instance.belongto.name
-        self.fields['meter'].initial = self.instance.meter.serialnumber
-
-        if self.instance.meter:
-            self.fields['serialnumber'].initial = self.instance.meter.serialnumber
-            self.fields['dn'].initial = self.instance.meter.dn
-            self.fields['metertype'].initial = self.instance.meter.metertype
-            
-            if self.instance.meter.simid:
-                self.fields['simid'].initial = self.instance.meter.simid.simcardNumber
-        
-
-    class Meta:
-        model = Station    
-        fields= ('username','description','usertype','madedate','lng','lat','locate','focus','biguser')
-
 
 class AssignStationForm(forms.Form):
     stationassign = forms.CharField()
@@ -111,23 +53,3 @@ class StationAssignForm(forms.ModelForm):
         model = DMABaseinfo
         fields = ('dma_no',)
 
-
-
-class VSecondWaterAddForm(forms.ModelForm):
-    belongto = forms.CharField()
-
-    class Meta:
-        model = VSecondWater
-        fields = ['name','serialnumber','address','version','manufacturer','lng','lat','coortype','product_date','artist','artistPreview']
-
-class VSecondWaterEditForm(forms.ModelForm):
-    belongto = forms.CharField()
-
-    class Meta:
-        model = VSecondWater
-        fields = ['name','serialnumber','address','version','manufacturer','lng','lat','coortype','product_date','artist','artistPreview']
-
-    def __init__(self, *args, **kwargs):
-        super(VSecondWaterEditForm, self).__init__(*args, **kwargs)
-
-        self.fields['belongto'].initial = self.instance.belongto.name

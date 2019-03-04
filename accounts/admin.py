@@ -6,7 +6,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 
 from .forms import UserAdminCreationForm, UserAdminChangeForm
-from .models import User,MyRoles
+from .models import MyUser,MyRoles
 
 class UserAdmin(BaseUserAdmin):
     # The forms to add and change user instances
@@ -44,7 +44,7 @@ class UserAdmin(BaseUserAdmin):
 class MyRoleAdmin(admin.ModelAdmin):
     list_display=  ('name','rid','notes','uid','belongto','permissionTree')
 
-admin.site.register(User, UserAdmin)
+admin.site.register(MyUser, UserAdmin)
 
 admin.site.register(MyRoles,MyRoleAdmin)
 

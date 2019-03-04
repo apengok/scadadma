@@ -4,8 +4,9 @@ from django.contrib.auth import authenticate, login, get_user_model
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django.urls import reverse
 from django.utils.safestring import mark_safe
-from .models import User,MyRoles
+from .models import MyUser,MyRoles
 
+User=MyUser
 # User = get_user_model() #another way get user model
 
 # class RegisterForm(forms.ModelForm):
