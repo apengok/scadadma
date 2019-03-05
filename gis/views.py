@@ -269,7 +269,7 @@ def savePolygons(request):
 def getFenceDetails(request):
     print("getFenceDetails",request.POST)
     dma_no = request.POST.get("dma_no") or ''
-    fenceNodes = request.POST.get("fenceNodes")
+    fenceNodes = request.POST.get("fenceNodes") or ''
     # print("dma_no",dma_no)
     # print("fenceNodes",fenceNodes)
 

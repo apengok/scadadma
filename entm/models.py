@@ -88,46 +88,7 @@ class Organization(MPTTModel):
         if self.dma.all().count() > 0:
             print('dma exists ,cant delete.')
             return False
-        # 站点
-        for s in self.station_set.all():
-            print("before delete station set to parant organzation")
-            s.belongto = self.parent
-            s.save()
-        # 表具
-        for m in self.meter_set.all():
-            print("before delete meter set to parant organzation")
-            m.belongto = self.parent
-            m.save()
-        # SIM卡
-        for s in self.simcard_set.all():
-            print("before delete simcart set to parant organzation")
-            s.belongto = self.parent
-            s.save()
-        # 小区
-        for c in self.vcommunity_set.all():
-            print("before delete comunity set to parant organzation")
-            c.belongto = self.parent
-            c.save()
-        # 集中器
-        for c in self.vconcentrator_set.all():
-            print("before delete concentor set to parant organzation")
-            c.belongto = self.parent
-            c.save()
-        # 二供
-        for c in self.vsecondwater_set.all():
-            print("before delete secondwater set to parant organzation")
-            c.belongto = self.parent
-            c.save()
-        # 压力
-        for c in self.vpressure_set.all():
-            print("before delete pressure set to parant organzation")
-            c.belongto = self.parent
-            c.save()
-        # 户表
-        for c in self.vwatermeter_set.all():
-            print("before delete watermeter set to parant organzation")
-            c.belongto = self.parent
-            c.save()
+        
 
         return True
 

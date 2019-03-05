@@ -16,31 +16,31 @@ urlpatterns = [
 
     # tree list etc
     
-#     url(r'^district/dmatree/',views.dmatree,name='dmatree'),
+    url(r'^district/dmatree/',views.dmatree,name='dmatree'),
 
-#     # dma管理 --dma分区管理
-#     url(r'^districtmanager/?$', views.DistrictMangerView.as_view(), name='districtmanager'),#组织和用户管理
-#     url(r'^district/add/?$',views.DistrictAddView.as_view(),name='districtadd'),
-#     url(r'^district/edit/(?P<pId>\w+)/?$',views.DistrictEditView.as_view(),name='districtedit'),
-#     url(r'^district/detail/(?P<pId>\w+)/?$',views.DistrictDetailView.as_view(),name='districtdetail'),
-#     url(r'^district/delete/?$',views.DistrictDeleteView.as_view(),name='districtdelete'),
-#     url(r'^district/dmabaseinfo/?$',views.dmabaseinfo,name='dmabaseinfo'),
-#     url(r'^district/dmabaseinfo/edit/(?P<pk>\w+)/?$',views.DMABaseinfoEditView.as_view(),name='dmabaseinfoedit'),
-#     url(r'^getdmamapusedata/?$',views.getdmamapusedata,name='getdmamapusedata'),
-#     url(r'^verifydmano/?$',views.verifydmano,name='verifydmano'),
-#     url(r'^verifydmaname/?$',views.verifydmaname,name='verifydmaname'),
+    # dma管理 --dma分区管理
+    url(r'^districtmanager/?$', views.DistrictMangerView.as_view(), name='districtmanager'),#组织和用户管理
+    url(r'^district/add/?$',views.DistrictAddView.as_view(),name='districtadd'),
+    url(r'^district/edit/(?P<pId>\w+)/?$',views.DistrictEditView.as_view(),name='districtedit'),
+    url(r'^district/detail/(?P<pId>\w+)/?$',views.DistrictDetailView.as_view(),name='districtdetail'),
+    url(r'^district/delete/?$',views.DistrictDeleteView.as_view(),name='districtdelete'),
+    url(r'^district/dmabaseinfo/?$',views.dmabaseinfo,name='dmabaseinfo'),
+    url(r'^district/dmabaseinfo/edit/(?P<pk>\w+)/?$',views.DMABaseinfoEditView.as_view(),name='dmabaseinfoedit'),
+    url(r'^getdmamapusedata/?$',views.getdmamapusedata,name='getdmamapusedata'),
+    url(r'^verifydmano/?$',views.verifydmano,name='verifydmano'),
+    url(r'^verifydmaname/?$',views.verifydmaname,name='verifydmaname'),
 
-#     # dma 列表选择关联
-#     url(r'^getDmaSelect/?$',views.getDmaSelect,name='getDmaSelect'),
+    # dma 列表选择关联
+    url(r'^getDmaSelect/?$',views.getDmaSelect,name='getDmaSelect'),
 
-#     #dma分区站点配置
-#     url(r'^district/assignstation/(?P<pk>\w+)/?$',views.DistrictAssignStationView.as_view(),name='districtassignstation'),
-#     url(r'^dmaStation/getdmastationsbyId/?$',views.getdmastationsbyId,name='getdmastationsbyId'),
-#     url(r'^dmaStation/saveDmaStation/?$',views.saveDmaStation,name='saveDmaStation'),
+    #dma分区站点配置
+    url(r'^district/assignstation/(?P<pk>\w+)/?$',views.DistrictAssignStationView.as_view(),name='districtassignstation'),
+    url(r'^dmaStation/getdmastationsbyId/?$',views.getdmastationsbyId,name='getdmastationsbyId'),
+    url(r'^dmaStation/saveDmaStation/?$',views.saveDmaStation,name='saveDmaStation'),
 
-# # dma 分区地图信息处理
-#     url(r'^district/saveDmaGisinfo/?$',views.saveDmaGisinfo,name='saveDmaGisinfo'),
-#     url(r'^district/getDmaGisinfo/?$',views.getDmaGisinfo,name='getDmaGisinfo'),
+# dma 分区地图信息处理
+    url(r'^district/saveDmaGisinfo/?$',views.saveDmaGisinfo,name='saveDmaGisinfo'),
+    url(r'^district/getDmaGisinfo/?$',views.getDmaGisinfo,name='getDmaGisinfo'),
     
 
 #     #stations  

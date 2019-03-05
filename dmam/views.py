@@ -67,20 +67,25 @@ def dmatree(request):
         organs = Organization.objects.first()
     else:
         organs = user.belongto #Organization.objects.all()
+        if organs is None:
+            organs = Organization.objects.filter(name='歙县')[0]
     
     # 组织
     organ_lists = organs.get_descendants(include_self=True).values("id","name","cid","pId","uuid","organlevel","attribute")
+
+    #district
+    district_lists = District.objects.values("id","name")
     
     # mergeds = merge_values(o_lists)
     #dma
-    dma_lists = user.dma_list_queryset().values("pk","dma_name","dma_no","belongto__cid","belongto__organlevel")
+    dma_lists = DMABaseinfo.objects.values("pk","dma_name","dma_no","belongto__cid","belongto__organlevel")
     # merged_dma = merge_values_to_dict(dma_lists,"belongto__cid")
     #station
-    station_lists = user.station_list_queryset('').values("pk","username","meter__simid__simcardNumber","meter__protocol","belongto__cid")
+    station_lists = Bigmeter.objects.values("pk","username","commaddr","districtid")
     #community
-    comunity_lists = user.community_list_queryset('').values("pk","name","belongto__cid")
+    comunity_lists = Community.objects.values("pk","name","districtid")
     #pressure
-    pressure_lists = user.pressure_list_queryset('').values("pk","username","simid__simcardNumber","belongto__cid")
+    # pressure_lists = user.pressure_list_queryset('').values("pk","username","simid__simcardNumber","belongto__cid")
 
     p_dma_no='' #dma_lists[0]['dma_no'] 
     
@@ -108,75 +113,22 @@ def dmatree(request):
         # 会出现pk 和 username list长度不等的情况，可能有同名站点
     if stationflag == '1':
         for s in station_lists:
-            if protocolflag == '1':
-                if s["meter__protocol"] == '0':
-                    organtree.append({
+            organtree.append({
                         "name":s['username'],
                         "id":s['pk'],
-                        "districtid":'',
-                        "pId":s["belongto__cid"],
+                        "districtid":s['districtid'],
+                        "pId":s["districtid"],
                         "type":"station",
                         "dma_no":'',
 
-                        "commaddr":s["meter__simid__simcardNumber"],
-                        "dma_station_type":"1", # 在dma站点分配中标识该是站点还是小区
-                        "icon":"/static/virvo/resources/img/station.png",
-                        "uuid":''
-                    })
-            else:
-                organtree.append({
-                        "name":s['username'],
-                        "id":s['pk'],
-                        "districtid":'',
-                        "pId":s["belongto__cid"],
-                        "type":"station",
-                        "dma_no":'',
-
-                        "commaddr":s["meter__simid__simcardNumber"],
+                        "commaddr":s["commaddr"],
                         "dma_station_type":"1", # 在dma站点分配中标识该是站点还是小区
                         "icon":"/static/virvo/resources/img/station.png",
                         "uuid":''
                     })
         
 
-    # pressure
-    if pressureflag == '1':
-        for p in pressure_lists:
-                
-            organtree.append({
-                "name":p['username'],
-                "id":p['pk'],
-                "districtid":'',
-                "pId":p["belongto__cid"],
-                "type":"pressure",
-                "dma_no":'',
-
-                "commaddr":p["simid__simcardNumber"],
-                # "dma_station_type":"1", # 在dma站点分配中标识该是站点还是小区
-                "icon":"/static/virvo/resources/img/pressure.png",
-                "uuid":''
-            })
-
-    # pressure
-    if secondwaterflag == '1':
-        secondwaterlists = user.secondwater_list_queryset('').values('pk','name','belongto__cid')
-        for p in secondwaterlists:
-                
-            organtree.append({
-                "name":p['name'],
-                "id":p['pk'],
-                "districtid":'',
-                "pId":p["belongto__cid"],
-                "type":"secondwater",
-                "dma_no":'',
-
-                "commaddr":p["pk"],
-                # "dma_station_type":"1", # 在dma站点分配中标识该是站点还是小区
-                "icon":"/static/scada/img/bz_b.png",
-                "uuid":''
-            })
     
-
     #community
     if communityflag == '1':
         for c in comunity_lists:
@@ -186,7 +138,7 @@ def dmatree(request):
                 "name":c['name'],
                 "id":c['pk'],
                 "districtid":'',
-                "pId":c["belongto__cid"],
+                "pId":c["districtid"],
                 "type":"community",
                 "dma_no":'',
                 "open":False,
@@ -550,16 +502,16 @@ def dmabaseinfo(request):
             commaddr = a["station_id"]     # 大表 通讯地址commaddr 或者 小区关联的集中器pk(or id)，由station_type 标识
             station_type = a["station_type"] # 大表还是小区 1-大表 2-小区
             if station_type == '1':
-                s = Station.objects.filter(meter__simid__simcardNumber=commaddr).values("id","username","usertype","meter__dn",
-                    "meter__metertype","meter__serialnumber","madedate","meter__belongto__name")[0]
-                edit_id = s["id"]
+                s = Bigmeter.objects.filter(commaddr=commaddr).values("pk","username","usertype","dn",
+                    "metertype","serialnumber","madedate","districtid")[0]
+                edit_id = s["pk"]
                 username = s["username"]
                 usertype = s["usertype"]
                 simid =commaddr
-                dn = s["meter__dn"]
-                belongto_name = s["meter__belongto__name"]
-                metertype = s["meter__metertype"]
-                serialnumber = s["meter__serialnumber"]
+                dn = s["dn"]
+                belongto_name = s["districtid"]
+                metertype = s["metertype"]
+                serialnumber = s["serialnumber"]
                 createdate = s["madedate"]
             elif station_type == '2':
                 s = VCommunity.objects.filter(id=commaddr).values("id","name","vconcentrators__name","belongto__name")[0]
@@ -1063,7 +1015,7 @@ class DistrictAssignStationView(LoginRequiredMixin,AjaxableResponseMixin,UserPas
             meter_type = a.meter_type
             station_type = a.station_type # 大表还是小区 1-大表 2-小区
             if station_type == '1':
-                s = Station.objects.get(meter__simid__simcardNumber=commaddr)
+                s = Bigmeter.objects.get(commaddr=commaddr)
                 edit_id = s.pk
                 username = s.username
                 
@@ -1156,8 +1108,8 @@ def getdmastationsbyId(request):
         commaddr = a.station_id
         station_type = a.station_type
         if station_type == "1":
-            s= Station.objects.get(meter__simid__simcardNumber=commaddr)
-            edit_id = s.id
+            s= Bigmeter.objects.get(commaddr=commaddr)
+            edit_id = s.pk
             username = s.username
         else:
             s = VCommunity.objects.get(id=commaddr)

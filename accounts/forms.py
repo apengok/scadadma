@@ -106,7 +106,7 @@ class LoginForm(forms.Form):
             print( '请把滑块滑到右边')
             # raise forms.ValidationError("请把滑块滑到右边")
 
-        qs = User.objects.filter(user_name=user_name)
+        qs = MyUser.objects.filter(user_name=user_name)
         if qs.exists():
             # user email is registered, check active/
             not_active = qs.filter(is_active=False)
@@ -130,7 +130,7 @@ class LoginForm(forms.Form):
                 #     raise forms.ValidationError("This user is inactive.")
         user = authenticate(request, username=user_name, password=password)
         if user is None:
-            print("invalid user")
+            print("invalid user",user_name,password)
             raise forms.ValidationError("用户名或密码错误")
         login(request, user)
         self.user = user
