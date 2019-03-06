@@ -33,8 +33,8 @@ urlpatterns = [
     url(r'^favicon\.ico$', faviconredirect,name='faviconredirect'),
     url(r'^admin/jsi18n', i18n_javascript),
     url(r'^admin/', admin.site.urls),
-    url(r'^$',LoginView.as_view(), name='login'),
-    # url(r'^$',TemplateView.as_view(template_name='_vbase.html'),name='home'),
+    # url(r'^$',LoginView.as_view(), name='login'),
+    url(r'^$',TemplateView.as_view(template_name='dmam/districtlist.html')),
 
     url(r'^(?P<page>.+\.html)$', StaticView.as_view()),
     url(r'^echarts/map/province/(?P<page>.+\.json)$', StaticView.as_view()),
@@ -53,6 +53,9 @@ urlpatterns = [
     url(r'^gis/', include('gis.urls', namespace='gis')),
     url(r'^entm/', include('entm.urls', namespace='entm')),
     url(r'^dmam/', include('dmam.urls', namespace='dmam')),
+    url(r'^monitor/', include('monitor.urls', namespace='monitor')),
+    url(r'^analysis/', include('analysis.urls', namespace='analysis')),
+    url(r'^reports/', include('reports.urls', namespace='reports')),
     
     
     

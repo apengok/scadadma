@@ -62,6 +62,9 @@ INSTALLED_APPS = [
     'gis',
     'dmam',
     'django_apscheduler',
+    'monitor',
+    'analysis',
+    'reports',
     
 ]
 

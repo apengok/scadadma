@@ -43,7 +43,7 @@ from .models import FenceDistrict,FenceShape
 
 # Create your views here.
 
-class PipelineQueryView(LoginRequiredMixin,TemplateView):
+class PipelineQueryView(TemplateView):
     template_name = "gis/pipelinequery.html"
 
     def get_context_data(self, *args, **kwargs):
@@ -54,7 +54,7 @@ class PipelineQueryView(LoginRequiredMixin,TemplateView):
         return context  
 
 
-class PipelineStasticView(LoginRequiredMixin,TemplateView):
+class PipelineStasticView(TemplateView):
     template_name = "gis/pipelinestastic.html"
 
     def get_context_data(self, *args, **kwargs):
@@ -65,7 +65,7 @@ class PipelineStasticView(LoginRequiredMixin,TemplateView):
         return context  
 
 
-class PipelineAnalysView(LoginRequiredMixin,TemplateView):
+class PipelineAnalysView(TemplateView):
     template_name = "gis/pipelineanalys.html"
 
     def get_context_data(self, *args, **kwargs):
@@ -76,7 +76,7 @@ class PipelineAnalysView(LoginRequiredMixin,TemplateView):
         return context  
 
 
-class PipelineImexportView(LoginRequiredMixin,TemplateView):
+class PipelineImexportView(TemplateView):
     template_name = "gis/pipelineimexport.html"
 
     def get_context_data(self, *args, **kwargs):
@@ -88,7 +88,9 @@ class PipelineImexportView(LoginRequiredMixin,TemplateView):
 
 def fenceTree_organ(request):
     user = request.user
-    fences = user.fence_list_queryset().values()
+    print ('user is:',user)
+    fences = FenceDistrict.objects.values()
+    # fences = user.fence_list_queryset().values()
 
     fentree = [{"name":"圆形","pId":"-","id":"zw_m_circle","type":"fenceParent","open":"true"},
                 {"name":"矩形","pId":"-","id":"zw_m_rectangle","type":"fenceParent","open":"true"},
@@ -239,8 +241,14 @@ def savePolygons(request):
     longitudes = request.POST.get("longitudes")
     latitudes = request.POST.get("latitudes")
 
-    createDataUsername = request.user.user_name
+    if request.user.is_anonymous:
+        createDataUsername = 'admin'
+        
+    else:
+        createDataUsername = request.user.user_name
     organ = Organization.objects.get(name=belongto)
+    if organ is None:
+        organ = Organization.objects.first()
 
     if addOrUpdatePolygonFlag == "1":
         f = FenceDistrict.objects.get(cid=polygonId)
@@ -768,8 +776,13 @@ def getDMAFenceOnce(request):
     dma_level = request.POST.get("dma_level") or '2'
 
     user = request.user
+    print("user is ",user)
     # dma_no_list = user.dma_list_queryset().values_list("dma_no")
-    dma_lists = user.dma_list_queryset().values("pk","dma_name","dma_no","belongto__cid","belongto__organlevel")
+    if user.is_anonymous:  #or not user.is_authenticated
+        dma_lists = DMABaseinfo.objects.values("pk","dma_name","dma_no","belongto__cid","belongto__organlevel")
+    else:
+
+        dma_lists = user.dma_list_queryset().values("pk","dma_name","dma_no","belongto__cid","belongto__organlevel")
 
     dma_no_list = [d["dma_no"] for d in dma_lists]
     allfence = FenceShape.objects.filter(dma_no__in=dma_no_list).values()

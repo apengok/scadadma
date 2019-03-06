@@ -298,19 +298,19 @@ class MyUser(AbstractBaseUser,PermissionsMixin):
 
     
 
-    # # 组织下dma分区列表--二级和三级列表分开查询,组织cid、级别organlevel、dma_no
-    # def dma_list_queryset(self):
-    #     # if self.is_admin:
-    #     #     return DMABaseinfo.objects.search(cid,level,dma_no)
+    # 组织下dma分区列表--二级和三级列表分开查询,组织cid、级别organlevel、dma_no
+    def dma_list_queryset(self):
+        if self.is_admin:
+            return DMABaseinfo.objects.all()
 
-    #     dmalist = DMABaseinfo.objects.none()
-    #     #下级组织的用户
-    #     sub_organs = self.belongto.sub_organizations(include_self=True)
-    #     # user | merge two QuerySet
-    #     for g in sub_organs:
-    #         dmalist |= g.dma.all()
+        dmalist = DMABaseinfo.objects.none()
+        #下级组织的用户
+        sub_organs = self.belongto.sub_organizations(include_self=True)
+        # user | merge two QuerySet
+        for g in sub_organs:
+            dmalist |= g.dma.all()
             
-    #     return dmalist
+        return dmalist
 
     # # 组织下dma分区围栏列表
     # def fence_list_queryset(self):

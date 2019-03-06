@@ -112,7 +112,7 @@ class DMABaseinfo(models.Model):
         for d in dmastations:
             commaddr = d.station_id
             commaddr_list.append(commaddr)
-        stationlist = Station.objects.filter(meter__simid__simcardNumber__in=commaddr_list)
+        stationlist = Bigmeter.objects.filter(commaddr__in=commaddr_list)
             
         return stationlist
 
