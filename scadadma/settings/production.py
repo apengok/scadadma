@@ -1,3 +1,5 @@
+# -*- coding:utf-8 -*-
+
 """
 Django settings for leakage project.
 
@@ -15,7 +17,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
@@ -28,6 +29,22 @@ DEBUG = False
 ALLOWED_HOSTS = ['*']
 
 
+# Celery settings
+
+CELERY_BROKER_URL = 'amqp://guest:guest@localhost//'
+
+#: Only add pickle to this list if your broker is secured
+#: from unwanted access (see userguide/security.html)
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_RESULT_BACKEND = 'db+sqlite:///results.sqlite'
+CELERY_TASK_SERIALIZER = 'json'
+
+
+# BROKER_URL = 'amqp://guest:guest@localhost//'
+# CELERY_ACCEPT_CONTENT = ['json']
+# CELERY_TASK_SERIALIZER = 'json'
+# CELERY_RESULT_SERIALIZER = 'json'
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -38,18 +55,26 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'mptt',
-    'entm',
-    'accounts',
-    'monitor',
     'import_export',
-    'dmam',
+    'accounts',
     'legacy',
+    'entm',
+    'gis',
+    'dmam',
+    'django_apscheduler',
+    'monitor',
     'analysis',
-    'devm',
-    # 'channels',
+    'reports',
+    
 ]
 
-X_FRAME_OPTIONS = 'ALLOW-FROM http://220.179.118.150:8082/'
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend', # this is default
+    # 'guardian.backends.ObjectPermissionBackend',
+)
+
+X_FRAME_OPTIONS = 'ALLOW-FROM http://220.179.118.150:8080/'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -61,12 +86,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'waterwork.urls'
+ROOT_URLCONF = 'scadadma.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,"templates")],
+        'DIRS': [os.path.join(BASE_DIR,"templates"),os.path.join(BASE_DIR,"echarts","map","province")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -74,40 +99,41 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'waterwork.wsgi.application'
+WSGI_APPLICATION = 'scadadma.wsgi.application'
 
-# ASGI_APPLICATION = "waterwork.routing.application"
+# IMPORT_EXPORT_USE_TRANSACTIONS = True
+
+# ASGI_APPLICATION = "scadadma.routing.application"
 
 # Database
+# yum install mysql mysql-devel mysql-lib
+# pip install mysqlclient
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': os.path.join(BASE_DIR, 'virvo_dev2.db'),
+    # },
     'default': { 
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',#postgresql_psycopg2  or django.contrib.gis.db.backends.postgis or django.db.backends.postgresql_psycopg2
-        'NAME': 'waterwork',
-        'USER': 'scada',
-        'PASSWORD': 'scada',
-        'HOST': '120.78.255.129',    #120.78.255.129 http://120.78.255.129
-        'PORT': '5432',
-    },
-    'zncb': {
         'ENGINE': 'django.db.backends.mysql',#postgresql_psycopg2  or django.contrib.gis.db.backends.postgis or django.db.backends.postgresql_psycopg2
         'NAME': 'zncb',
         'USER': 'scada',
         'PASSWORD': 'scada',
-        'HOST': '220.179.118.150',
+        'HOST': '192.168.1.27',    #120.78.255.129 192.168.197.134
         'PORT': '3306',
-        # 'OPTIONS':{
-        #     'init_command':"SET sql_mode='STRICT_TRANS_TABLES'",
-        #     'charset':'utf8mb4',
-        # }
+        'STORAGE_ENGINE': 'INNODB',
+        'OPTIONS': {'charset': 'utf8mb4'},
+        'TEST_CHARSET': 'utf8mb4',
     },
-    # 'virvo': {
+    
+    # 'gis': { http://120.78.255.129
     #     'ENGINE': 'django.contrib.gis.db.backends.postgis',#postgresql_psycopg2  or django.contrib.gis.db.backends.postgis or django.db.backends.postgresql_psycopg2
     #     'NAME': 'scada',
     #     'USER': 'scada',
@@ -117,7 +143,8 @@ DATABASES = {
     # },
 }
 
-DATABASE_ROUTERS = ['legacy.routers.LegacyRouter', ]
+# DATABASE_ROUTERS = ['legacy.routers.LegacyRouter', ]
+
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
 
@@ -136,14 +163,14 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = 'accounts.MyUser' #change buikld-in user model to us
+# AUTH_GROUP_MODEL = 'accounts.MyRoles'
 
-AUTH_USER_MODEL = 'accounts.User' #change buikld-in user model to us
 LOGIN_URL = '/login/'
 LOGIN_URL_REDIRECT = '/'
 LOGOUT_URL = '/logout/'
 
 LOGOUT_REDIRECT_URL = '/login/'
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
@@ -158,21 +185,28 @@ USE_L10N = False
 
 USE_TZ = False
 
+DATE_INPUT_FORMATS = ['%d-%m-%Y']
+
+#add geospatial something
+GEOS_LIBRARY_PATH = '/usr/local/lib/libgeos_c.so'
+GDAL_LIBRARY_PATH = '/usr/local/lib/libgdal.so'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
+
 STATIC_ROOT = os.path.join(BASE_DIR,'static')
 STATIC_URL = '/static/'
 
-
-#add geospatial something
-GEOS_LIBRARY_PATH = '/usr/local/geos-3.4.2/lib/libgeos_c.so'
-GDAL_LIBRARY_PATH = '/usr/local/gdal-1.11.2/lib/libgdal.so'
-
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "assets"),
-    
+    os.path.join(BASE_DIR,"echarts","map","province"),
 ]
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'data/') # 'data' is my media folder
+# MEDIA_URL = '/media/'
 
 try:
     from .loggers_seeting import *

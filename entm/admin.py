@@ -37,10 +37,22 @@ class OrganizationAdmin(admin.ModelAdmin,ExportCsvMixin):
             headers = next(reader)
             print(headers,len(headers))
             # data = {i: v for (i, v) in enumerate(reader)}
+            organ = models.Organization.objects.first()
             for row in reader:
                 # print(row,len(row))
                 data = {headers[i]:v for (i, v) in enumerate(row)}
+                del data["id"]
+                del data["lft"]
+                del data["rght"]
+                del data["tree_id"]
+                del data["level"]
+                
+                data["parent"] = organ
+                # data = ["{}={}".format(headers[i],v) for (i, v) in enumerate(row)]
+                # tdata = list("{}={}".format(k,v) for k,v in data.items())
                 print(data)
+                
+                models.Organization.objects.create(**data)
                 # for i in range(len(row)):
                 #     print("{}.{}={}".format(i,headers[i],row[i]))
             self.message_user(request, "Your csv file has been imported")

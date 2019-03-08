@@ -68,8 +68,8 @@
             //sidebar高度
             $(".sidebar").css('height',newContLeftH + 'px');
             //计算顶部logo相关padding
-            logoWidth = $("#header .brand").width();
-            btnIconWidth = $("#header .toggle-navigation").width();
+            logoWidth = 240;//$("#header .brand").width();
+            btnIconWidth = 40;//$("#header .toggle-navigation").width();
             windowWidth = $(window).width();
             newwidth = (logoWidth + btnIconWidth + 46) / windowWidth * 100;
             //左右自适应宽度

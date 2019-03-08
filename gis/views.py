@@ -285,6 +285,7 @@ def getFenceDetails(request):
         fenceData = []
         details_obj = []
         if FenceShape.objects.filter(dma_no=dma_no).exists():
+            print("exists .....")
             pgo = FenceShape.objects.filter(dma_no=dma_no).values().first()
             fd = FenceDistrict.objects.filter(cid=pgo["shapeId"]).values().first()
             
@@ -778,11 +779,13 @@ def getDMAFenceOnce(request):
     user = request.user
     print("user is ",user)
     # dma_no_list = user.dma_list_queryset().values_list("dma_no")
-    if user.is_anonymous:  #or not user.is_authenticated
-        dma_lists = DMABaseinfo.objects.values("pk","dma_name","dma_no","belongto__cid","belongto__organlevel")
-    else:
+    # if user.is_anonymous:  #or not user.is_authenticated
+    #     dma_lists = DMABaseinfo.objects.values("pk","dma_name","dma_no","belongto__cid","belongto__organlevel")
+    # else:
 
-        dma_lists = user.dma_list_queryset().values("pk","dma_name","dma_no","belongto__cid","belongto__organlevel")
+    #     dma_lists = user.dma_list_queryset().values("pk","dma_name","dma_no","belongto__cid","belongto__organlevel")
+
+    dma_lists = DMABaseinfo.objects.values("pk","dma_name","dma_no","belongto__cid","belongto__organlevel")
 
     dma_no_list = [d["dma_no"] for d in dma_lists]
     allfence = FenceShape.objects.filter(dma_no__in=dma_no_list).values()
@@ -852,6 +855,7 @@ def getDMAFenceDetails(request):
     # dma_no_list = user.dma_list_queryset().filter(belongto__cid__icontains=current_organ).filter(belongto__organlevel=dma_level).values_list("dma_no")
     # dma_no_list = user.dma_list_queryset().filter(belongto__cid__icontains=current_organ).values_list("dma_no") #why filter
     dma_no_list = user.dma_list_queryset().values_list("dma_no")
+    dma_no_list = DMABaseinfo.objects.values_list("dma_no")
     print("dma_no_list:",dma_no_list)
 
     if dflag == '2':

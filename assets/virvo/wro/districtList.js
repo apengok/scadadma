@@ -331,15 +331,16 @@
                 async:false,
                 dataType: 'json',
                 success: function (data) {
+                    console.log(data)
                     var dataList = data.obj;
                     if (dataList != null && dataList.length > 0) {
                         polygon = data.obj[0].fenceData;
                         fillColor_seted = fillColor = data.obj[0].fillColor
                         strokeColor_seted = strokeColor = data.obj[0].strokeColor
-                        if(fillColor === null){
+                        if(fillColor === null || fillColor === ""){
                             fillColor_seted = fillColor = "#1791fc"
                         }
-                        if(strokeColor === null){
+                        if(strokeColor === null || strokeColor === ""){
                             strokeColor_seted = strokeColor = "#FF33FF"
                         }
                         var dataArr = new Array();

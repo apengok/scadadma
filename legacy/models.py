@@ -154,7 +154,7 @@ class Bigmeter(models.Model):
     objects = BigmeterManager()
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'bigmeter'
 
     def __unicode__(self):
@@ -699,7 +699,7 @@ class HdbWatermeterDay(models.Model):
     objects = HdbWatermeterDayManager()
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'hdb_watermeter_day'
         indexes = [
            models.Index(fields=['waterid', 'communityid',]),
@@ -1341,7 +1341,7 @@ class MeterParameter(models.Model):
     commandtype  = models.CharField(db_column='commandtype', max_length=64, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'meterparameter'
 
     def __unicode__(self):

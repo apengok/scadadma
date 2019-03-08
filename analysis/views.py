@@ -135,7 +135,7 @@ def flowdata_mnf(request):
         
     comaddr = dmastation.commaddr
     
-    
+    print("dma first station commaddr:",comaddr)
     
     # if comaddr:
         # comaddr = bigmeter.commaddr

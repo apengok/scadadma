@@ -72,6 +72,7 @@ def dmatree(request):
     
     # 组织
     organ_lists = organs.get_descendants(include_self=True).values("id","name","cid","pId","uuid","organlevel","attribute")
+    print(organ_lists)
 
     #district
     district_lists = District.objects.values("id","name")
@@ -514,13 +515,14 @@ def dmabaseinfo(request):
                 serialnumber = s["serialnumber"]
                 createdate = s["madedate"]
             elif station_type == '2':
-                s = VCommunity.objects.filter(id=commaddr).values("id","name","vconcentrators__name","belongto__name")[0]
+                # s = VCommunity.objects.filter(id=commaddr).values("id","name","vconcentrators__name","districtid")[0]
+                s = Community.objects.filter(id=commaddr).values("id","name","districtid")[0]
                 edit_id = s["id"]
                 username = s["name"]
                 usertype = "小区"
                 simid =commaddr
                 dn = ""
-                belongto_name = s["belongto__name"]
+                belongto_name = s["districtid"]
                 metertype = "小区"
                 serialnumber = ""
                 createdate = ""

@@ -126,11 +126,11 @@ DATABASES = {
         'NAME': 'zncb',
         'USER': 'scada',
         'PASSWORD': 'scada',
-        'HOST': '192.168.1.27',    #120.78.255.129 192.168.197.134
+        'HOST': '220.179.118.150',    #120.78.255.129 192.168.197.134
         'PORT': '3306',
         'STORAGE_ENGINE': 'INNODB',
-        'OPTIONS': {'charset': 'utf8mb4'},
-        'TEST_CHARSET': 'utf8mb4',
+        'OPTIONS': {'charset': 'utf8'},
+        'TEST_CHARSET': 'utf8',
     },
     
     # 'gis': { http://120.78.255.129
@@ -199,7 +199,7 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "assets"),
-    os.path.join(BASE_DIR,"echarts","map","province"),
+    # os.path.join(BASE_DIR,"echarts","map","province"),
 ]
 
 MEDIA_URL = '/media/'

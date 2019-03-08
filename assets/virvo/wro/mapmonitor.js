@@ -168,10 +168,11 @@ function assignmentNotExpandFilter(node){ // 搜索type等于人或者车
           + "-" + (parseInt(nowDate.getMonth() + 1) < 10 ? "0" + parseInt(nowDate.getMonth() + 1) : parseInt(nowDate.getMonth() + 1))
           + "-" + (nowDate.getDate() < 10 ? "0" + nowDate.getDate() : nowDate.getDate()) + " " + ("23") + ":" + ("59") + ":" + ("59");
       $("#timeInterval").val(startTime + "--" + endTime);
-      logoWidth = $("#header .brand").width();
-      btnIconWidth = $("#header .toggle-navigation").width();
+      logoWidth = 240;//$("#header .brand").width();
+      btnIconWidth = 40;//$("#header .toggle-navigation").width();
       windowWidth = $(window).width();
       newwidth = (logoWidth + btnIconWidth + 40 + 2) / windowWidth * 100;
+
       $("#content-left").css({
         "width": newwidth + "%"
       });
