@@ -3791,8 +3791,8 @@
                                 ;
                                 var lineSpot = dataList[i].lineSpot == undefined ? [] : dataList[i].lineSpot;
                                 var lineSegment = dataList[i].lineSegment == undefined ? [] : dataList[i].lineSegment;
-                                var polygon_fillColor = dataList[i].fillColor == undefined ? "#1791fc" : dataList[i].fillColor;
-                                var polygon_strokeColor = dataList[i].strokeColor == undefined ? "#FF33FF" : dataList[i].strokeColor;
+                                var polygon_fillColor = (dataList[i].fillColor == undefined || dataList[i].fillColor == "") ? "#1791fc" : dataList[i].fillColor;
+                                var polygon_strokeColor = (dataList[i].strokeColor == undefined || dataList[i].strokeColor == "") ? "#FF33FF" : dataList[i].strokeColor;
                                 if (fenceType == "zw_m_marker") { // 标注
                                     fenceOperation.drawMark(fenceData, showMap);
                                 } else if (fenceType == "zw_m_line") { // 线
@@ -3863,8 +3863,8 @@
                                         var lineSpot = [];
                                         var polygon = dataList[i].polygon;
                                         // pwl polygon fillColor and strokeColor
-                                        var polygon_fillColor = dataList[i].fillColor == undefined ? "#1791fc" : dataList[i].fillColor;
-                                        var polygon_strokeColor = dataList[i].strokeColor == undefined ? "#FF33FF" : dataList[i].strokeColor;
+                                        var polygon_fillColor = (dataList[i].fillColor == undefined || dataList[i].fillColor == "") ? "#1791fc" : dataList[i].fillColor;
+                                        var polygon_strokeColor = (dataList[i].strokeColor == undefined || dataList[i].strokeColor == "") ? "#FF33FF" : dataList[i].strokeColor;
                                         if (fenceType == "zw_m_marker") { // 标注
                                             layer.msg(fenceOperationLableEdit);
                                             map.off("rightclick", amendLine);
@@ -4173,14 +4173,14 @@
                 $("#longitudesPolygons").val(longitudes);
                 $("#latitudesPolygons").val(latitudes);
                 // pwl add belongto
-                $("#zTreeOrganSel").val(data.belongto)
+                // $("#zTreeOrganSel").val(data.belongto)
                 // pageLayout.closeVideo();
                 setTimeout(function () {
                     console.log("timeout show?")
                     $("#myModal").modal("show");
                     $("#myModal").modal('show');
                     // pwl add edit belongto
-                    customFucn.userTree();
+                    // customFucn.userTree();
                     $("#zTreeContent").hide();
                     console.log("data.dma_no",data.dma_no)
                     $("#dma_no_Val").val(data.dma_no)
@@ -4928,8 +4928,8 @@
                                 var fenceData = dataList[i].fenceData;
                                 var lineSpot = dataList[i].lineSpot;
                                 var lineSegment = dataList[i].lineSegment == undefined ? [] : dataList[i].lineSegment;
-                                var polygon_fillColor = dataList[i].fillColor == undefined ? "#1791fc" : dataList[i].fillColor;
-                                var polygon_strokeColor = dataList[i].strokeColor == undefined ? "#FF33FF" : dataList[i].strokeColor;
+                                var polygon_fillColor = (dataList[i].fillColor == undefined || dataList[i].fillColor == "") ? "#1791fc" : dataList[i].fillColor;
+                                var polygon_strokeColor = (dataList[i].strokeColor == undefined || dataList[i].strokeColor == "") ? "#FF33FF" : dataList[i].strokeColor;
                                 if (fenceType == "zw_m_marker") { // 标注
                                     fenceOperation.drawMark(fenceData, map);
                                 } else if (fenceType == "zw_m_line") { // 线
@@ -7710,7 +7710,7 @@
             } else if (fenceType == 'zw_m_polygon') {
                 detailsFenceType = data[0].polygon.type;
                 detailsFenceDescribe = data[0].polygon.description;
-                detailsFenceBelongtoName = data[0].polygon.belongto;
+                // detailsFenceBelongtoName = data[0].polygon.belongto;
                 if (detailsFenceDescribe == "" || detailsFenceDescribe == null) {
                     detailsFenceDescribe = "无任何描述"
                 }

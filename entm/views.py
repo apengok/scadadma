@@ -675,7 +675,7 @@ def findOperations(request):
 """
 group add
 """
-class UserGroupAddView(AjaxableResponseMixin,UserPassesTestMixin,CreateView):
+class UserGroupAddView(AjaxableResponseMixin,CreateView):
     model = Organization
     template_name = "entm/groupadd.html"
     form_class = OrganizationAddForm
@@ -715,6 +715,7 @@ class UserGroupAddView(AjaxableResponseMixin,UserPassesTestMixin,CreateView):
         instance = form.save(commit=False)
         instance.is_org = True
         cid = self.request.POST.get("pId","oranization")  #cid is parent orgnizations
+        print("group add form_valid  cid",cid)
         organizaiton_belong = Organization.objects.get(cid=cid)
         instance.parent = organizaiton_belong
         instance.pId = cid
@@ -738,7 +739,7 @@ class UserGroupAddView(AjaxableResponseMixin,UserPassesTestMixin,CreateView):
         organizaiton_belong = Organization.objects.get(cid=kwargs.get("pId"))
         initial_base["parent_attribute"] = organizaiton_belong.attribute
         initial_base["parent_organlevel"] = organizaiton_belong.organlevel
-        print(organizaiton_belong,organizaiton_belong.organlevel,organizaiton_belong.attribute)
+        print("groudadd get ",organizaiton_belong,organizaiton_belong.organlevel,organizaiton_belong.attribute)
         form.initial = initial_base
         
         return render(request,self.template_name,
@@ -748,7 +749,7 @@ class UserGroupAddView(AjaxableResponseMixin,UserPassesTestMixin,CreateView):
 """
 Group edit, manager
 """
-class UserGroupEditView(AjaxableResponseMixin,UserPassesTestMixin,UpdateView):
+class UserGroupEditView(AjaxableResponseMixin,UpdateView):
     model = Organization
     form_class = OrganizationEditForm
     template_name = "entm/groupedit.html"
@@ -836,7 +837,7 @@ class UserGroupDetailView(DetailView):
 """
 Assets comment deletion, manager
 """
-class UserGroupDeleteView(AjaxableResponseMixin,UserPassesTestMixin,DeleteView):
+class UserGroupDeleteView(AjaxableResponseMixin,DeleteView):
     model = Organization
     # template_name = "aidsbank/asset_comment_confirm_delete.html"
 
@@ -885,8 +886,8 @@ class UserGroupDeleteView(AjaxableResponseMixin,UserPassesTestMixin,DeleteView):
             
 
         # 不能删除自己所属的组织
-        if self.object == self.request.user.belongto:
-            return JsonResponse({"success":False,"msg":"不能删除自己所属的组织"})
+        # if self.object == self.request.user.belongto:
+        #     return JsonResponse({"success":False,"msg":"不能删除自己所属的组织"})
 
         # 删除组织前先处理该组织下相关的设备归属到上一级组织
         bdflag = self.object.before_delete_it()
@@ -952,7 +953,7 @@ def roleexport(request):
 """
 Roles creation, manager
 """
-class RolesAddView(AjaxableResponseMixin,UserPassesTestMixin,CreateView):
+class RolesAddView(AjaxableResponseMixin,CreateView):
     model = MyRoles
     template_name = "entm/roleadd.html"
     form_class = RoleCreateForm
@@ -1012,7 +1013,7 @@ class RolesAddView(AjaxableResponseMixin,UserPassesTestMixin,CreateView):
 """
 Roles edit, manager
 """
-class RoleEditView(AjaxableResponseMixin,UserPassesTestMixin,UpdateView):
+class RoleEditView(AjaxableResponseMixin,UpdateView):
     model = MyRoles
     form_class = MyRolesForm
     template_name = "entm/roleedit.html"
@@ -1102,7 +1103,7 @@ def roledeletemore(request):
 """
 Assets comment deletion, manager
 """
-class RoleDeleteView(AjaxableResponseMixin,UserPassesTestMixin,DeleteView):
+class RoleDeleteView(AjaxableResponseMixin,DeleteView):
     model = MyRoles
     
     def dispatch(self, *args, **kwargs):
@@ -1175,7 +1176,7 @@ class UserMangerView(LoginRequiredMixin,TemplateView):
 """
 User add, manager
 """
-class UserAddView(AjaxableResponseMixin,UserPassesTestMixin,CreateView):
+class UserAddView(AjaxableResponseMixin,CreateView):
     model = MyUser
     template_name = "entm/useradd.html"
     form_class = RegisterForm
@@ -1277,7 +1278,7 @@ class UserAddView(AjaxableResponseMixin,UserPassesTestMixin,CreateView):
 """
 User edit, manager
 """
-class UserEditView(AjaxableResponseMixin,UserPassesTestMixin,UpdateView):
+class UserEditView(AjaxableResponseMixin,UpdateView):
     model = MyUser
     form_class = UserDetailChangeForm
     template_name = "entm/useredit.html"
@@ -1495,7 +1496,7 @@ def userdeletemore(request):
 """
 Assets comment deletion, manager
 """
-class UserDeleteView(AjaxableResponseMixin,UserPassesTestMixin,DeleteView):
+class UserDeleteView(AjaxableResponseMixin,DeleteView):
     model = MyUser
     # template_name = "aidsbank/asset_comment_confirm_delete.html"
 

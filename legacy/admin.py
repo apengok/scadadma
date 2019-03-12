@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 
 from django.contrib import admin
-from . models import Bigmeter,HdbFlowData,MeterParameter,Watermeter,Community,HdbWatermeterDay
+from . models import Bigmeter,HdbFlowData,MeterParameter,Watermeter,Community,HdbWatermeterDay,District
 # Register your models here.
 
 
@@ -74,3 +74,10 @@ class HdbWatermeterDayAdmin(admin.ModelAdmin):
     list_display = ["waterid","hdate","dosage","communityid"]
 
     # search_fields = ("id","name","districtid" )
+
+
+@admin.register(District)
+class DistrictAdmin(admin.ModelAdmin):
+    list_display = ["id","name","description","parentid"]
+
+    search_fields = ("id","name" )

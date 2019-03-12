@@ -96,7 +96,8 @@
                     data:{'csrfmiddlewaretoken': '{{ csrf_token }}'},
                     otherParam : {  // 是否可选 Organization
                         "isStation" : "1",
-                        "isDma":"1",
+                        // "isDma":"1",
+                        "isDistrict":"1",
                         "isCommunity":"1",
                         // "csrfmiddlewaretoken": "{{ csrf_token }}"
                     },
@@ -232,20 +233,20 @@
                 
                 var pNode = treeNode.getParentNode(); //父节点---组织
                 var dma_group = $("#dma_group").val();
-                if(dma_group != pNode.name){
-                    // layer.msg("非当前组织站点");
-                    layer.confirm("选择了非当前分区组织的站点,是否继续",{
-                        title :'操作确认',
-                        icon : 3, // 问号图标
-                        btn: ['确认','取消'] // 按钮
-                    },function(index){
-                        layer.close(index,{move:false});
+                // if(dma_group != pNode.name){
+                //     // layer.msg("非当前组织站点");
+                //     layer.confirm("选择了非当前分区组织的站点,是否继续",{
+                //         title :'操作确认',
+                //         icon : 3, // 问号图标
+                //         btn: ['确认','取消'] // 按钮
+                //     },function(index){
+                //         layer.close(index,{move:false});
                         
-                    },function(index){
-                        zTree.cancelSelectedNode(treeNode);
-                        layer.close(index,{move:false});
-                    });
-                }
+                //     },function(index){
+                //         zTree.cancelSelectedNode(treeNode);
+                //         layer.close(index,{move:false});
+                //     });
+                // }
                 
                 // if(treeNode.type == "dma"){
                     
@@ -261,20 +262,20 @@
                 
                 var pNode = treeNode.getParentNode(); //父节点---组织
                 var dma_group = $("#dma_group").val();
-                if(dma_group != pNode.name){
-                    // layer.msg("非当前组织站点");
-                    layer.confirm("选择了非当前分区组织的站点,是否继续",{
-                        title :'操作确认',
-                        icon : 3, // 问号图标
-                        btn: ['确认','取消'] // 按钮
-                    },function(index){
-                        layer.close(index,{move:false});
+                // if(dma_group != pNode.name){
+                //     // layer.msg("非当前组织站点");
+                //     layer.confirm("选择了非当前分区组织的站点,是否继续",{
+                //         title :'操作确认',
+                //         icon : 3, // 问号图标
+                //         btn: ['确认','取消'] // 按钮
+                //     },function(index){
+                //         layer.close(index,{move:false});
                         
-                    },function(index){
-                        zTree.cancelSelectedNode(treeNode);
-                        layer.close(index,{move:false});
-                    });
-                }
+                //     },function(index){
+                //         zTree.cancelSelectedNode(treeNode);
+                //         layer.close(index,{move:false});
+                //     });
+                // }
                 
                 // if(treeNode.type == "dma"){
                     

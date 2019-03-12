@@ -246,7 +246,10 @@ def savePolygons(request):
         
     else:
         createDataUsername = request.user.user_name
-    organ = Organization.objects.get(name=belongto)
+    try:
+        organ = Organization.objects.get(name=belongto)
+    except:
+        organ = Organization.objects.get(name='歙县')
     if organ is None:
         organ = Organization.objects.first()
 

@@ -55,6 +55,7 @@ def dmatree(request):
     
     stationflag = request.POST.get("isStation") or ''
     dmaflag = request.POST.get("isDma") or ''
+    districtflag = request.POST.get("isDistrict") or ''
     communityflag = request.POST.get("isCommunity") or ''
     buidlingflag = request.POST.get("isBuilding") or ''
     pressureflag = request.POST.get("isPressure") or ''
@@ -71,8 +72,12 @@ def dmatree(request):
             organs = Organization.objects.filter(name='歙县')[0]
     
     # 组织
-    organ_lists = organs.get_descendants(include_self=True).values("id","name","cid","pId","uuid","organlevel","attribute")
-    print(organ_lists)
+    if dmaflag == "1":
+        organ_lists = organs.get_descendants(include_self=True).values("id","name","cid","pId","uuid","organlevel","attribute")
+    else:
+        organ_lists = Organization.objects.filter(name='歙县').values("id","name","cid","pId","uuid","organlevel","attribute")
+        shexian_organ_cid = organ_lists[0]["cid"]
+    # print(organ_lists)
 
     #district
     district_lists = District.objects.values("id","name")
@@ -84,13 +89,25 @@ def dmatree(request):
     #station
     station_lists = Bigmeter.objects.values("pk","username","commaddr","districtid")
     #community
-    comunity_lists = Community.objects.values("pk","name","districtid")
+    comunity_lists = Community.objects.values("id","name","districtid")
     #pressure
     # pressure_lists = user.pressure_list_queryset('').values("pk","username","simid__simcardNumber","belongto__cid")
 
     p_dma_no='' #dma_lists[0]['dma_no'] 
     
-    
+    for o in organ_lists:
+        organtree.append({
+            "name":o["name"],
+            "id":o["cid"],
+            "pId":o["pId"],
+            "attribute":o["attribute"],
+            "organlevel":o["organlevel"],
+            "districtid":'',
+            "type":"group",
+            # "dma_no":o["dma__dma_no"] if o["dma__dma_no"] else '',  #如果存在dma分区，分配第一个dma分区的dma_no，点击数条目的时候使用
+            "icon":"/static/virvo/resources/img/wenjianjia.png",
+            "uuid":o["uuid"]
+        })   
     
     #dma
     if dmaflag == '1':
@@ -108,6 +125,23 @@ def dmatree(request):
                 "uuid":''
             })
             
+    #歙县district
+    if districtflag == '1':
+        for d in district_lists:
+            # print("id_{}_name{}--pId:{}".format(d["id"],d["name"],shexian_organ_cid))
+            organtree.append({
+                "name":d["name"],
+                "id":"district_{}".format(d["id"]),
+                "districtid":d["id"],
+                "pId":shexian_organ_cid,
+                "type":"district",
+                "dma_no":"",
+                "leakrate":random.choice([9.65,13.46,11.34,24.56,32.38,7.86,10.45,17.89,23.45,36,78]),
+                "dmalevel":"",
+                "icon":"/static/virvo/resources/img/wenjianjia.png",
+                "uuid":''
+            })
+            
             
 
         #station
@@ -118,7 +152,7 @@ def dmatree(request):
                         "name":s['username'],
                         "id":s['pk'],
                         "districtid":s['districtid'],
-                        "pId":s["districtid"],
+                        "pId":"district_{}".format(s["districtid"]) ,
                         "type":"station",
                         "dma_no":'',
 
@@ -133,62 +167,47 @@ def dmatree(request):
     #community
     if communityflag == '1':
         for c in comunity_lists:
+            # print("\tid_{}_name{}--pId:{}".format(c["id"],c["name"],c["districtid"]))
+
             community_name = c['name']
             # 小区列表
             organtree.append({
                 "name":c['name'],
-                "id":c['pk'],
-                "districtid":'',
-                "pId":c["districtid"],
+                "id":c['id'],
+                "districtid":c["districtid"],
+                "pId":"district_{}".format(c["districtid"]) ,
                 "type":"community",
                 "dma_no":'',
                 "open":False,
-                "commaddr":c['pk'],#在dma站点分配中需要加入小区的分配，在这里传入小区的id，在后续处理中通过小区id查找小区及对应的集中器等
+                "commaddr":c['id'],#在dma站点分配中需要加入小区的分配，在这里传入小区的id，在后续处理中通过小区id查找小区及对应的集中器等
                 "dma_station_type":"2", # 在dma站点分配中标识该是站点还是小区
                 "icon":"/static/virvo/resources/img/home.png",
                 "uuid":''
             })
 
-            # 小区下级栋列表
-            if buidlingflag == "1":
-                wt = VWatermeter.objects.filter(communityid__name=community_name).values('buildingname').distinct()
-                # if s['name'] == '新城花苑':
-                for w in wt:
-                    organtree.append({
-                        "name":w["buildingname"],
-                        "id":'',
-                        "districtid":'',
-                        "pId":c['pk'],
-                        "type":"building",
-                        "dma_no":'',
-                        "open":False,
-                        "commaddr":'commaddr',
-                        # "dma_station_type":"", # 在dma站点分配中标识该是站点还是小区
-                        "icon":"/static/virvo/resources/img/buildingno.png",
-                        "uuid":''
-                    })
+            
 
         
-    for o in organ_lists:
-        organtree.append({
-            "name":o["name"],
-            "id":o["cid"],
-            "pId":o["pId"],
-            "attribute":o["attribute"],
-            "organlevel":o["organlevel"],
-            "districtid":'',
-            "type":"group",
-            # "dma_no":o["dma__dma_no"] if o["dma__dma_no"] else '',  #如果存在dma分区，分配第一个dma分区的dma_no，点击数条目的时候使用
-            "icon":"/static/virvo/resources/img/wenjianjia.png",
-            "uuid":o["uuid"]
-        })   
+    # for o in organ_lists:
+    #     organtree.append({
+    #         "name":o["name"],
+    #         "id":o["cid"],
+    #         "pId":o["pId"],
+    #         "attribute":o["attribute"],
+    #         "organlevel":o["organlevel"],
+    #         "districtid":'',
+    #         "type":"group",
+    #         # "dma_no":o["dma__dma_no"] if o["dma__dma_no"] else '',  #如果存在dma分区，分配第一个dma分区的dma_no，点击数条目的时候使用
+    #         "icon":"/static/virvo/resources/img/wenjianjia.png",
+    #         "uuid":o["uuid"]
+    #     })   
     
     
     result = dict()
     result["data"] = organtree
     
     # print(json.dumps(result))
-
+    # print(result)
     
     return HttpResponse(json.dumps(organtree))
 
@@ -653,7 +672,7 @@ def getdmamapusedata(request):
 
     return HttpResponse(json.dumps(data))
 
-class DMABaseinfoEditView(AjaxableResponseMixin,UserPassesTestMixin,UpdateView):
+class DMABaseinfoEditView(AjaxableResponseMixin,UpdateView):
     model = DMABaseinfo
     form_class = DMABaseinfoForm
     template_name = "dmam/baseinfo.html"
@@ -710,7 +729,7 @@ class DMABaseinfoEditView(AjaxableResponseMixin,UserPassesTestMixin,UpdateView):
     #     print(self.kwargs)
     #     return Organization.objects.get(cid=self.kwargs["pId"])
 
-class DistrictMangerView(LoginRequiredMixin,TemplateView):
+class DistrictMangerView(TemplateView):
     template_name = "dmam/districtlist.html"
 
     def get_context_data(self, *args, **kwargs):
@@ -718,7 +737,7 @@ class DistrictMangerView(LoginRequiredMixin,TemplateView):
         context["page_menu"] = "dma管理"
         # context["page_submenu"] = "组织和用户管理"
         context["page_title"] = "dma分区管理"
-        user_organ = self.request.user.belongto
+        user_organ = '歙县'   #self.request.user.belongto
 
         default_dma = DMABaseinfo.objects.first()   # user_organ.dma.all().first()
         # print('districtmanager',default_dma.pk,default_dma.dma_name)
@@ -753,7 +772,7 @@ def verifyusername(request):
 
     return HttpResponse(json.dumps({"success":bflag}))  
 
-class DistrictAddView(LoginRequiredMixin,AjaxableResponseMixin,UserPassesTestMixin,CreateView):
+class DistrictAddView(AjaxableResponseMixin,CreateView):
     model = Organization
     template_name = "dmam/districtadd.html"
     form_class = DMACreateForm
@@ -829,7 +848,7 @@ class DistrictAddView(LoginRequiredMixin,AjaxableResponseMixin,UserPassesTestMix
 """
 Group edit, manager
 """
-class DistrictEditView(LoginRequiredMixin,AjaxableResponseMixin,UserPassesTestMixin,UpdateView):
+class DistrictEditView(AjaxableResponseMixin,UpdateView):
     model = DMABaseinfo
     form_class = DMACreateForm
     template_name = "dmam/districtedit.html"
@@ -874,7 +893,7 @@ class DistrictEditView(LoginRequiredMixin,AjaxableResponseMixin,UserPassesTestMi
 """
 Group Detail, manager
 """
-class DistrictDetailView(LoginRequiredMixin,DetailView):
+class DistrictDetailView(DetailView):
     model = DMABaseinfo
     form_class = DMABaseinfoForm
     template_name = "dmam/districtdetail.html"
@@ -893,7 +912,7 @@ class DistrictDetailView(LoginRequiredMixin,DetailView):
 """
 Assets comment deletion, manager
 """
-class DistrictDeleteView(LoginRequiredMixin,AjaxableResponseMixin,UserPassesTestMixin,DeleteView):
+class DistrictDeleteView(AjaxableResponseMixin,DeleteView):
     model = DMABaseinfo
     # template_name = "aidsbank/asset_comment_confirm_delete.html"
 
@@ -937,7 +956,7 @@ class DistrictDeleteView(LoginRequiredMixin,AjaxableResponseMixin,UserPassesTest
         return JsonResponse({"success":True})
 
 
-class DistrictAssignStationView(LoginRequiredMixin,AjaxableResponseMixin,UserPassesTestMixin,UpdateView):
+class DistrictAssignStationView(AjaxableResponseMixin,UpdateView):
     model = DMABaseinfo
     form_class = StationAssignForm
     template_name = "dmam/districtassignstation.html"
