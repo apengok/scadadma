@@ -833,8 +833,9 @@
         init: function () {
             // 创建地图
             map = new AMap.Map("MapContainer", {
+                center: [118.438781,29.871515],
                 resizeEnable: true,   //是否监控地图容器尺寸变化
-                zoom: 18,       //地图显示的缩放级别
+                zoom: 15,       //地图显示的缩放级别
             });
             // 输入提示
             var startPoint = new AMap.Autocomplete({

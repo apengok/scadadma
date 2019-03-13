@@ -1837,7 +1837,7 @@ function assignmentNotExpandFilter(node){ // 搜索type等于人或者车
       var childNodes = treeObj.transformToArray(treeNode);
         console.log(childNodes)
         for(var i = 0;i<childNodes.length;i++){
-            if(childNodes[i].type == "dma"){
+            if(childNodes[i].type == "dma" ){
                 dma_in_group.push(childNodes[i].dma_no);
             }
         }
@@ -3250,11 +3250,12 @@ function assignmentNotExpandFilter(node){ // 搜索type等于人或者车
                             polygon = data.obj[j].fenceData;
                             dmaMapStatistic = data.obj[j].dmaMapStatistic
                             fillColor_seted = fillColor = data.obj[j].fillColor
+                            console.log(fillColor_seted)
                             strokeColor_seted = strokeColor = data.obj[j].strokeColor
-                            if(fillColor === null){
+                            if(fillColor === null || fillColor == ""){
                                 fillColor_seted = fillColor = "#1791fc"
                             }
-                            if(strokeColor === null){
+                            if(strokeColor === null || strokeColor == ""){
                                 strokeColor_seted = strokeColor = "#FF33FF"
                             }
                             var dataArr = new Array();
@@ -3530,6 +3531,7 @@ function assignmentNotExpandFilter(node){ // 搜索type等于人或者车
                         count_dma_2_in += 1;
                     }
                     else{
+                      if(show_dma_level !== "3")
                         continue;
                     }
                     
