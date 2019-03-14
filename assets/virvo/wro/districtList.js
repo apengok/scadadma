@@ -1370,6 +1370,10 @@
         },
         
         assignstation : function (){
+            if(current_dma_pk == "" ){
+                layer.msg("请先选择dma分区")
+                return;
+            }
             $("#assignstation").attr("href","/dmam/district/assignstation/"+current_dma_pk+"/");
         }
         

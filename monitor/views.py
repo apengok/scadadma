@@ -27,6 +27,7 @@ from accounts.models import MyUser,MyRoles
 from legacy.models import HdbFlowDataDay,HdbFlowDataMonth,Bigmeter,Alarm
 
 from entm.models import Organization
+from dmam.models import DMABaseinfo
 
 from dmam.utils import merge_values, merge_values_with,merge_values_to_dict
 
@@ -94,6 +95,26 @@ def dmastasticinfo():
         )
 
     return data
+
+
+def maprealdata(request):
+    dma_no = request.POST.get("dma_no") or None
+
+    result = {}
+
+    if dma_no:
+        dma = DMABaseinfo.objects.get(dma_no=dma_no)
+        dmartdata = dma.dma_map_realdata()
+        result["success"] = True
+        result["dmartdata"] = dmartdata
+
+
+    else:
+        result["success"] = False
+        return HttpResponse(json.dumps(result))
+
+
+    return HttpResponse(json.dumps(result))
 
         
 class MapMonitorView(TemplateView):

@@ -520,6 +520,7 @@ def dmabaseinfo(request):
         
         def assigned(a):
             commaddr = a["station_id"]     # 大表 通讯地址commaddr 或者 小区关联的集中器pk(or id)，由station_type 标识
+            
             station_type = a["station_type"] # 大表还是小区 1-大表 2-小区
             if station_type == '1':
                 s = Bigmeter.objects.filter(commaddr=commaddr).values("pk","username","usertype","dn",
@@ -740,7 +741,7 @@ class DistrictMangerView(TemplateView):
         user_organ = '歙县'   #self.request.user.belongto
 
         default_dma = DMABaseinfo.objects.first()   # user_organ.dma.all().first()
-        # print('districtmanager',default_dma.pk,default_dma.dma_name)
+        print('districtmanager',default_dma.pk,default_dma.dma_name)
         context["current_dma_pk"] = default_dma.pk if default_dma else ''
         context["current_dma_no"] = default_dma.dma_no if default_dma else ''
         context["current_dma_name"] = default_dma.dma_name if default_dma else ''
