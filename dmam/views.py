@@ -152,7 +152,7 @@ def dmatree(request):
                         "name":s['username'],
                         "id":s['pk'],
                         "districtid":s['districtid'],
-                        "pId":"district_{}".format(s["districtid"]) ,
+                        "pId":"district_{}".format(s["districtid"]) if districtflag == "1" else shexian_organ_cid,
                         "type":"station",
                         "dma_no":'',
 

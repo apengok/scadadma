@@ -1022,11 +1022,12 @@ class DailyUseView(TemplateView):
 
         station_name = ""
         organ = ""
-        stations = self.request.user.station_list_queryset('')
-        station = stations.first()
+        # stations = self.request.user.station_list_queryset('')
+        
+        station = Bigmeter.objects.first()
         if station:
             station_name = station.username
-            organ = station.belongto.name
+            organ = "歙县"
             station_id = station.pk
         
         context["station"] = station_name
@@ -1047,10 +1048,11 @@ def flowdata_dailyuse(request):
     stationid = request.POST.get("station_id") # DMABaseinfo pk
     days = int(request.POST.get("days") or '1' )
     data = []
-    
-    station = Station.objects.get(pk=int(stationid))
+    print("dailyuse station_id is ",stationid)
+    # station = Station.objects.get(pk=int(stationid))
+    station = Bigmeter.objects.get(commaddr=stationid)
 
-    commaddr = station.meter.simid.simcardNumber
+    commaddr =  stationid#station.commaddr
     # commaddr = '440333078307' #for test
     print("commaddr:",commaddr,"days ",days)
     today = datetime.date.today()

@@ -118,7 +118,7 @@
 
 
 {% block content_left %}
-<div id="content-left" class="col-md-2" style="padding-right: 0px; padding-left: 0px; z-index: 9999999999999999999999999">
+<div id="content-left" class="col-md-2" style="padding-right: 0px; padding-left: 0px; ">
     <div id="operationMenu" class="panel panel-default panDefMenu">
         <div class="panel-heading" style="padding:10px;background-color:#ffffff;color:#767676;">
             <h3 class="panel-title fwb">分区总数(<span id="all_dma_num"></span>)</h3>
@@ -255,16 +255,17 @@
           </div>
           <!-- playcard here delete -->
           <div class="realTimeCanArea rtcaHidden" id="realTimeCanArea">
-              <div class="form-group">
-                  <div class="col-md-12 searchListSelect">
+              <div class="form-group" style="height: 57px;border-bottom:10px">
+                <!--  <div class="col-md-12 searchListSelect">-->
+                  <div class=" col-md-12 searchListSelect" style="margin-left: -20px;margin-top: -10px;width: 360px" id="searchInput" >
+
                       <input style="cursor: pointer; background-color: #fafafa;"
                              class="form-control layer-date laydate-icon"
-                             id="timeInterval"
-                             name="timeInterval" readonly/>
+                             id="timeInterval" name="timeInterval" readonly />
                   </div>
-                  <button type="button" class="btn btn-primary" 
-                              id="trackPlayQuery">查询
-                      </button>
+                  <button id="trackPlayQuery" type="button" class="btn "  style="margin-top: 5px;margin-right: -10px; background-color:#CD3299;color: #fffffF;float: right;" name="0" >查询</button> &nbsp;
+                  <!--<button type="button" class="btn btn-primary"  id="trackPlayQuery">查询-->
+                      <!--</button>-->
               </div>
               <!-- <div class="form-group">
                   <div class="col-md-12 control-label">

@@ -160,6 +160,52 @@ class Bigmeter(models.Model):
     def __unicode__(self):
         return '%s%s'%(self.username)
 
+    # 按小时统计的聚合Alarm.objects.values('commaddr').annotate(Count('id'))
+    def flow_hour_aggregate(self,startTime,endTime):
+
+        avg_str = "-"
+        max_str = "-"
+        min_str = "-"
+        avg_flow = HdbFlowDataHour.objects.filter(commaddr=self.commaddr).filter(hdate__range=[startTime,endTime]).aggregate(Avg('dosage'))
+        avg_value = avg_flow['dosage__avg']
+        if avg_value is not None:
+            avg_str = "{} m³".format(round(float(avg_value),2))
+
+        max_flow = HdbFlowDataHour.objects.filter(commaddr=self.commaddr).filter(hdate__range=[startTime,endTime]).aggregate(Max('dosage'))
+        max_value = max_flow['dosage__max']
+        # 最大值instance
+        max_date = ""
+        if max_value is not None:
+            max_item = HdbFlowDataHour.objects.filter(commaddr=self.commaddr).filter(hdate__range=[startTime,endTime]).filter(dosage=max_value)
+            max_date = max_item[0].hdate
+            max_str = "{} m³ ({}:00)".format(round(float(max_value),2),max_date[-2:])
+
+        min_flow = HdbFlowDataHour.objects.filter(commaddr=self.commaddr).filter(hdate__range=[startTime,endTime]).aggregate(Min('dosage'))
+        min_value = min_flow['dosage__min']
+        # 最xiao值instance
+        min_date = ""
+        if min_value is not None:
+            min_item = HdbFlowDataHour.objects.filter(commaddr=self.commaddr).filter(hdate__range=[startTime,endTime]).filter(dosage=min_value)
+            min_date = min_item[0].hdate
+            min_str = "{} m³ ({}:00)".format(round(float(min_value),2),min_date[-2:])
+
+        return avg_str,max_str,min_str
+
+    def press_Data(self,startTime,endTime):
+        press_data = {}
+        if self.commaddr is None:
+            return press_data
+        pressures = HdbPressureData.objects.filter(commaddr=self.commaddr).filter(readtime__range=[startTime,endTime]).values_list("readtime","pressure")
+
+        if pressures.count() == 0:
+            return press_data
+        # print('pressures:',pressures)
+        press_data = dict(pressures)
+        
+
+        
+        return press_data
+
 
 class Bigmeter2(models.Model):
     username = models.CharField(db_column='UserName', max_length=30, blank=True, null=True)  # Field name made lowercase.

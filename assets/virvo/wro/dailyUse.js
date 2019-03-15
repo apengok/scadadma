@@ -179,10 +179,10 @@
             
             if(treeNode.type == "station"){
                 var pNode = treeNode.getParentNode();
-                $("#organ_name").attr("value",pNode.name);
+                // $("#organ_name").attr("value",pNode.name);
                 $("#station_name").attr("value",treeNode.name);
                 $("#station_id").attr("value",treeNode.id);
-                organ = pNode.id;
+                // organ = pNode.id;
                 
                 dailyUse.inquireClick(1);
             }

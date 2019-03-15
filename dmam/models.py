@@ -504,13 +504,18 @@ class DMABaseinfo(models.Model):
 
         for m in month_list:
             # 本月进水
-            monthly_in = monthreport["monthly_in"][m]
-            monthly_out = monthreport["monthly_out"][m]
-            monthly_sale = monthreport["monthly_sale"][m]
-            monthly_uncount = monthreport["monthly_uncount"][m]
+            monthly_in = round(float(monthreport["monthly_in"][m]),2)
+            monthly_out = round(float(monthreport["monthly_out"][m]),2)
+            monthly_sale = round(float(monthreport["monthly_sale"][m]),2)
+            monthly_uncount = round(float(monthreport["monthly_uncount"][m]),2)
 
-            monthly_provider = float(monthly_in) - float(monthly_out)
-            monthly_leak = monthly_provider - float(monthly_sale) - float(monthly_uncount)
+            monthly_provider = round(float(float(monthly_in) - float(monthly_out)),2)
+            monthly_leak = round(float(float(monthly_provider - float(monthly_sale) - float(monthly_uncount))),2)
+            monthly_in = round(monthly_in/10000,2)
+            monthly_out = round(monthly_out/10000,2)
+            monthly_provider = round(monthly_provider/10000,2)
+            monthly_leak = round(monthly_leak/10000,2)
+
             if m == c_month:
                 # 供水，进水，出水，漏损
                 current_month_sale = round(float(monthly_sale),2)
@@ -537,13 +542,13 @@ class DMABaseinfo(models.Model):
         bbbcurrent_day     = [] #前前日
 
         for d in day_list:
-            daily_in = daily_report["daily_in"][d]
-            daily_out = daily_report["daily_out"][d]
-            daily_sale = daily_report["daily_sale"][d]
-            daily_uncount = daily_report["daily_uncount"][d]
+            daily_in = round(float(daily_report["daily_in"][d]),2)
+            daily_out = round(float(daily_report["daily_out"][d]),2)
+            daily_sale = round(float(daily_report["daily_sale"][d]),2)
+            daily_uncount = round(float(daily_report["daily_uncount"][d]),2)
 
-            daily_provider = float(daily_in) - float(daily_out)
-            daily_leak = daily_provider - float(daily_sale) - float(daily_uncount)
+            daily_provider = round(float(daily_in) - float(daily_out),2)
+            daily_leak = round(daily_provider - float(daily_sale) - float(daily_uncount),2)
 
             if d == d1:
                 current_day = [daily_provider,daily_in,daily_out,daily_leak]
