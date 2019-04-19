@@ -51,6 +51,8 @@ var headers = {"access_token": "8ec340a5-b4d9-4ebb-9889-e014993a8099"};
 <script src="/clbs/wro/topPublic.js"></script>
 {% endcomment %}
       <section class="main-content-wrapper">
+
+        {% include 'sidenav.html' %}
         <!-- 用户所属组织id -->
         <input id="userGroupId" value="{{ user.belongto.cid }}" type="text" hidden="true">
         <!-- 用户所属组织name -->
@@ -179,7 +181,7 @@ var headers = {"access_token": "8ec340a5-b4d9-4ebb-9889-e014993a8099"};
     <script src="{% static 'virvo/resources/js/toastr.min.js' %}"></script>
     <script src="{% static 'virvo/resources/js/bootstrap-suggest.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'virvo/resources/js/inputClear.min.js' %}"></script>
-    <script src="{% static 'virvo/wro/common-footer.js' %}"></script>
+    <script src="{% static 'virvo/wro/common-footer-sx.js' %}"></script>
 <div id="commonWin" tabIndex="-2" class="modal fade bs-example-modal-lg" aria-hidden="true" data-keyboard="false" data-backdrop="static">
     <div class="modal-dialog modal-lg">
         <div class="modal-content"></div>

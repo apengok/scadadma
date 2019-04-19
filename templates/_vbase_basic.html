@@ -316,6 +316,15 @@ $(function () {
             $("#" + windowId).on("hidden.bs.modal", function() {
                 $(this).removeData("bs.modal");
             });
+
+            if (typeof window.top.get_dma_role === 'function') {
+                // 存在且是function
+                //=1 dma管理权限  
+                var g_dma_role = window.top.get_dma_role();
+              
+             } else {
+              //没有获取到权限
+             }
         });
         /*]]>*/
     </script>

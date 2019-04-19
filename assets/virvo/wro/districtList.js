@@ -150,6 +150,10 @@
             }
         },
         Alterdma:function(){
+            if(g_role == 0){
+                layer.msg("没有dma管理权限，不能修改");
+                return;
+            }
             modify_flag = true;
             $("#id_pepoles_num,#id_acreage,#id_user_num,#id_pipe_texture,#id_pipe_length,#id_pipe_links,#id_pipe_years,#id_pipe_private,#id_ifc,#id_aznp,#id_night_use,#id_cxc_value,#id_belongto").removeAttr("readonly");
             $("#zTreeOrganSelEdit").attr("disabled",false);
@@ -1175,6 +1179,13 @@
             }
         },
         baseinfoCommit: function(){
+            if(!modify_flag){
+                return;
+            }
+            if(g_role == 0){
+                layer.msg("没有dma管理权限，不能修改，请联系管理员")
+                return;
+            }
             var     baseinfo_action = "/dmam/district/dmabaseinfo/edit/{id}/";
             dma_id = $("#current_dma_no").val();
             
@@ -1370,6 +1381,10 @@
         },
         
         assignstation : function (){
+            if(g_role == 0){
+                layer.msg("没有dma管理权限，请联系管理员")
+                return;
+            }
             if(current_dma_pk == "" ){
                 layer.msg("请先选择dma分区")
                 return;
@@ -1447,7 +1462,10 @@
 
         //提交基本信息
         // $("#baseinfoCommit").bind("click",dmaManage.baseinfoCommit);
-        
+        if(g_role == 0){
+            $("#assignstation").attr('disabled','disabled')
+            $("#assignstation").hide();
+        }
         
         $("#assignstation").on("click",dmaManage.assignstation);
         
@@ -1534,7 +1552,6 @@
     $("#fillColor").css("display", "none");
 
     $("#strokeColor").css("display", "none");
-    
 
     })
 })($,window)

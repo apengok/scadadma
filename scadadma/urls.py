@@ -46,6 +46,8 @@ urlpatterns = [
     url(r'^login/$', LoginView.as_view(), name='login'),
     url(r'^logout/$', LogoutView.as_view(), name='logout'),
     
+    #使用hplus页面布局是iframe加载的首页项
+    url(r'^hplus/$', TemplateView.as_view(template_name='hplus.html'), name='hplus'),
 
     #monitor
 

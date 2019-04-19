@@ -41,7 +41,7 @@
                     {% include '_hplus_header.html' %}
                 </nav>
             </div>
-            <!-- <div class="row content-tabs">
+            <div class="row content-tabs">
                 <button class="roll-nav roll-left J_tabLeft"><i class="fa fa-backward"></i>
                 </button>
                 <nav class="page-tabs J_menuTabs">
@@ -66,9 +66,9 @@
                     </ul>
                 </div>
                 <a href="login.html" class="roll-nav roll-right J_tabExit"><i class="fa fa fa-sign-out"></i> 退出</a>
-            </div> -->
+            </div>
             <div class="row J_mainContent" id="content-main">
-                <iframe class="J_iframe" name="iframe0" width="100%" height="100%" src="/index/" frameborder="0" data-id="homep" seamless></iframe>
+                <iframe class="J_iframe" name="iframe0" width="100%" height="100%" src="/dmam/districtmanager/" frameborder="0" data-id="homep" seamless></iframe>
             </div>
             {% include 'footer.html' %}
         </div>
@@ -86,6 +86,12 @@
     <script src="{% static 'hplus/js/hplus.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'hplus/js/contabs.min.js' %}"></script>
     <script src="{% static 'hplus/js/plugins/pace/pace.min.js' %}"></script>
+
+    <script type="text/javascript">
+        function get_g_role(){
+            return 1;
+        }
+    </script>
 </body>
 
 
