@@ -359,6 +359,8 @@ def dmareport(request):
         cp = 0
         if monthly_water[i] != 0:
             cp = (total_monthly_water[i] - total_monthly_sale_flow[i])/total_monthly_water[i] *100
+            if cp < 0:
+                cp = 0
         data.append({
             "hdate":hdates[i],
             "dosage":total_monthly_sale_flow[i]/10000,

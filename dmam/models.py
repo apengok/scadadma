@@ -250,7 +250,7 @@ class DMABaseinfo(models.Model):
             else:
                 monthly_use = Hdbflow_from_hdbflowmonth(commaddr,month_list) #HdbFlow_monthly(commaddr)
             
-            # print(m.username,commaddr,monthly_use)
+            print(commaddr,monthly_use)
             for k in monthly_in.keys():
                 if k in monthly_use.keys():
                     monthly_in[k] += monthly_use[k]
@@ -294,7 +294,7 @@ class DMABaseinfo(models.Model):
 
             else:
                 monthly_use = Hdbflow_from_hdbflowmonth(commaddr,month_list) #HdbFlow_monthly(commaddr)
-            # print(m.username,commaddr,monthly_use)
+            print(commaddr,monthly_use)
             for k in monthly_sale.keys():
                 if k in monthly_use.keys():
                     monthly_sale[k] += monthly_use[k]
@@ -315,7 +315,7 @@ class DMABaseinfo(models.Model):
 
             else:
                 monthly_use = Hdbflow_from_hdbflowmonth(commaddr,month_list) #HdbFlow_monthly(commaddr)
-            # print(m.username,commaddr,monthly_use)
+            print(commaddr,monthly_use)
             for k in monthly_uncount.keys():
                 if k in monthly_use.keys():
                     monthly_uncount[k] += monthly_use[k]
@@ -365,7 +365,7 @@ class DMABaseinfo(models.Model):
             else:
                 daily_use = Hdbflow_from_hdbflowday(commaddr,day_list) #HdbFlow_monthly(commaddr)
             
-            # print(m.username,commaddr,daily_use)
+            print('368--',commaddr,daily_use)
             for k in daily_in.keys():
                 if k in daily_use.keys():
                     daily_in[k] += daily_use[k]

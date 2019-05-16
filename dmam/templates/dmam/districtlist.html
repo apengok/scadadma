@@ -344,7 +344,9 @@
         
     } else {
       //没有获取到权限
-        g_role = 0;
+      if(window.top == window.self){
+        g_role = 1;
+      }
     }
 
 </script>

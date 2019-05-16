@@ -965,7 +965,7 @@ class DistrictAssignStationView(AjaxableResponseMixin,UpdateView):
 
     # @method_decorator(permission_required("dma.change_stations"))
     def dispatch(self, *args, **kwargs):
-        # self.role_id = kwargs["pk"]
+        print("dispatch",args,kwargs)
         return super(DistrictAssignStationView, self).dispatch(*args, **kwargs)
 
     def test_func(self):
@@ -1012,7 +1012,7 @@ class DistrictAssignStationView(AjaxableResponseMixin,UpdateView):
         # return super(DistrictAssignStationView,self).form_valid(form)
 
     def get_object(self):
-        print(self.kwargs)
+        print("w--",self.kwargs)
         return DMABaseinfo.objects.get(pk=int(self.kwargs["pk"]))
         
     def get_context_data(self, *args, **kwargs):
@@ -1043,7 +1043,7 @@ class DistrictAssignStationView(AjaxableResponseMixin,UpdateView):
                 
             elif station_type == '2':
                 # d = VConcentrator.objects.get(id=commaddr)
-                d = VCommunity.objects.get(id=commaddr)
+                d = Community.objects.get(id=commaddr)
                 edit_id = d.pk
                 username = d.name
 
@@ -1134,7 +1134,7 @@ def getdmastationsbyId(request):
             edit_id = s.pk
             username = s.username
         else:
-            s = VCommunity.objects.get(id=commaddr)
+            s = Community.objects.get(id=commaddr)
             edit_id = s.id
             username = s.name
         data.append({

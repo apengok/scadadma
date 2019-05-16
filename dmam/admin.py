@@ -61,7 +61,7 @@ class DmaStationAdmin(admin.ModelAdmin):
 
 @admin.register(DMABaseinfo)
 class DMABaseinfoAdmin(admin.ModelAdmin):
-    list_display = ['dma_no','dma_level','dma_name','creator','create_date','belongto']
+    list_display = ['pk','dma_no','dma_level','dma_name','creator','create_date','belongto']
     search_fields = ("dma_no","dma_name" )
 
     change_list_template = "entm/heroes_changelist.html"
